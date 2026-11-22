@@ -1,0 +1,776 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Coral Connect 4.0</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--blue:#2B86D9;--deep:#0E3F73;--navy:#082B52;--yellow:#E4EE6A;--white:#FFFFFF;--sand:#F4F8FC;--ink:#0B2440;--muted:#5A6F86;--line:#D9E6F3}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:#fff;color-scheme:light}
+.page{font-family:Poppins,system-ui,sans-serif;color:var(--ink);background:var(--white);width:100%;line-height:1.55}
+.wrap{max-width:1200px;margin:0 auto;padding:0 32px}
+h1,h2,h3,.wm{font-family:Montserrat,Poppins,sans-serif}
+h2{font-size:40px;font-weight:800;line-height:1.1;margin-bottom:12px;color:var(--deep)}
+.eyebrow{font-size:13px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--blue);margin-bottom:10px}
+.lead{font-size:18px;color:var(--muted);max-width:640px}
+section{padding:96px 0}
+a{color:inherit;text-decoration:none}
+.btn{display:inline-flex;align-items:center;gap:8px;font-weight:600;font-size:15px;padding:12px 22px;border-radius:999px;border:2px solid transparent;cursor:pointer;font-family:Poppins,sans-serif}
+.btn-y{background:var(--yellow);color:var(--navy)}
+.btn-o{border-color:var(--white);color:var(--white);background:transparent}
+.btn-b{background:var(--blue);color:var(--white)}
+.btn-ob{border-color:var(--blue);color:var(--blue);background:transparent}
+/* nav */
+.nav{position:sticky;top:0;z-index:20;background:var(--navy);color:var(--white)}
+.nav .wrap{display:flex;align-items:center;justify-content:space-between;height:72px;gap:24px}
+.mini{font-family:Montserrat;font-weight:900;font-size:18px;letter-spacing:.02em;color:var(--yellow);display:flex;align-items:center;gap:6px}
+.mini b{color:var(--white)}
+.links{display:flex;gap:22px;font-size:14px;font-weight:500}
+.links a:hover{color:var(--yellow)}
+.right{display:flex;align-items:center;gap:12px}
+.lang{display:flex;border:1px solid rgba(255,255,255,.35);border-radius:999px;overflow:hidden;font-size:12px;font-weight:600}
+.lang span{padding:6px 10px}.lang .on{background:var(--white);color:var(--navy)}
+.member{position:relative}
+.member summary{list-style:none;cursor:pointer;font-size:14px;font-weight:600;padding:10px 16px;border:1px solid rgba(255,255,255,.35);border-radius:999px;display:flex;gap:6px;align-items:center}
+.member summary::-webkit-details-marker{display:none}
+.member .menu{position:absolute;right:0;top:48px;background:var(--white);color:var(--ink);border-radius:14px;box-shadow:0 12px 32px rgba(8,43,82,.25);padding:8px;min-width:200px}
+.member .menu a{display:block;padding:10px 12px;border-radius:8px;font-size:14px}
+.member .menu a:hover{background:var(--sand)}
+/* hero */
+.hero{background:radial-gradient(1200px 600px at 80% 10%,#3C9BEA 0%,var(--blue) 40%,var(--deep) 100%);color:var(--white);padding:110px 0 120px;position:relative;overflow:hidden}
+.hero .wrap{display:grid;grid-template-columns:1.5fr 1fr;gap:48px;align-items:center;position:relative;z-index:1}
+.wm{font-weight:900;line-height:.9;color:var(--yellow);letter-spacing:-.01em}
+.wm .r1{font-size:112px;display:flex;align-items:center}
+.wm .r1 .o{display:inline-block;width:.78em;height:.78em;margin:0 .02em}
+.wm .four{color:var(--white);font-size:112px;margin-left:18px}
+.wm .r2{font-size:112px}
+.slogan{font-size:24px;font-weight:500;margin:26px 0 34px;max-width:520px}
+.slogan em{font-style:normal;color:var(--yellow)}
+.hero .cta{display:flex;gap:14px;flex-wrap:wrap}
+.datecard{aspect-ratio:1/1;background:var(--white);color:var(--navy);border-radius:28px;padding:40px;display:flex;flex-direction:column;justify-content:space-between;box-shadow:0 30px 60px rgba(4,25,50,.35);max-width:400px;justify-self:end;width:100%}
+.datecard .tag{display:inline-block;background:var(--yellow);font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:6px 12px;border-radius:999px;align-self:flex-start}
+.datecard .d{font-family:Montserrat;font-weight:900;font-size:64px;line-height:1;color:var(--blue)}
+.datecard .m{font-family:Montserrat;font-weight:800;font-size:26px}
+.datecard .loc{display:flex;gap:10px;align-items:flex-start;font-size:15px;color:var(--muted);border-top:1px solid var(--line);padding-top:18px}
+.count{display:flex;gap:10px;margin-top:6px}
+.count div{background:var(--sand);border-radius:12px;padding:10px 0;text-align:center;flex:1}
+.count b{display:block;font-family:Montserrat;font-size:22px;color:var(--navy)}
+.count small{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+.wave{position:absolute;left:0;right:0;bottom:-1px;height:80px}
+/* about */
+.about .grid{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:start}
+.about p{color:var(--muted);margin-bottom:14px;font-size:16px}
+.prog{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:56px}
+.pc{background:var(--sand);border-radius:20px;padding:26px;border:1px solid var(--line)}
+.pc .ic{width:44px;height:44px;border-radius:12px;background:var(--blue);display:grid;place-items:center;margin-bottom:16px}
+.pc h3{font-size:18px;font-weight:800;margin-bottom:6px;color:var(--navy)}
+.pc p{font-size:14px;color:var(--muted)}
+.pc .day{font-size:12px;font-weight:600;color:var(--blue);margin-top:12px;display:block}
+/* recap */
+.recap{background:var(--navy);color:var(--white)}
+.recap h2{color:var(--white)}.recap .lead{color:#B9CDE3}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin:48px 0 56px}
+.stat{border-top:3px solid var(--yellow);padding-top:16px}
+.stat b{font-family:Montserrat;font-size:56px;font-weight:900;color:var(--yellow);display:block;line-height:1}
+.stat span{font-size:15px;color:#B9CDE3}
+.strip{display:flex;gap:20px;overflow:hidden;mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent)}
+.track{display:flex;gap:20px;animation:slide 40s linear infinite}
+@keyframes slide{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.vid{width:340px;flex:none;aspect-ratio:16/9;border-radius:18px;background:linear-gradient(135deg,#1B5C9E,#0E3F73);position:relative;display:flex;align-items:flex-end;padding:18px;border:1px solid rgba(255,255,255,.12)}
+.vid .play{position:absolute;inset:0;margin:auto;width:56px;height:56px;border-radius:50%;background:var(--yellow);display:grid;place-items:center}
+.vid b{font-family:Montserrat;font-size:16px}.vid small{display:block;font-size:12px;color:#B9CDE3}
+/* donate */
+.donate{background:linear-gradient(180deg,var(--sand),var(--white))}
+.toggle{display:inline-flex;background:var(--white);border:1px solid var(--line);border-radius:999px;padding:4px;margin:28px 0 36px;font-size:14px;font-weight:600}
+.toggle span{padding:8px 18px;border-radius:999px;color:var(--muted)}.toggle .on{background:var(--blue);color:var(--white)}
+.tiers{display:grid;grid-template-columns:repeat(5,1fr);gap:14px}
+.tier{background:var(--white);border:1px solid var(--line);border-radius:22px;padding:24px 20px;display:flex;flex-direction:column}
+.tier.hot{border:2px solid var(--blue);box-shadow:0 18px 40px rgba(43,134,217,.18);position:relative}
+.tier.hot::before{content:"Most chosen";position:absolute;top:-13px;left:20px;background:var(--yellow);font-size:11px;font-weight:700;padding:4px 10px;border-radius:999px;color:var(--navy)}
+.tier .lvl{font-size:12px;font-weight:600;color:var(--blue);text-transform:uppercase;letter-spacing:.08em}
+.tier h3{font-size:20px;font-weight:800;color:var(--navy);margin:4px 0 10px}
+.tier .price{font-family:Montserrat;font-size:26px;font-weight:900;color:var(--navy)}
+.tier .price small{font-family:Poppins;font-size:12px;color:var(--muted);font-weight:500}
+.tier ul{list-style:none;margin:16px 0 20px;flex:1}
+.tier li{font-size:13px;color:var(--muted);padding:6px 0 6px 22px;position:relative;border-top:1px solid var(--line)}
+.tier li::before{content:"";position:absolute;left:0;top:11px;width:12px;height:12px;border-radius:50%;background:var(--yellow);box-shadow:inset 0 0 0 3px var(--blue)}
+.tier .btn{justify-content:center;width:100%}
+.note{font-size:13px;color:var(--muted);margin-top:20px}
+/* merch */
+.merch .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:40px}
+.cap #w1:checked~.img{--c:#8FC8F2;--w:#E4EE6A;--b:#6FB3E8;background:#082B52}
+.cap #w2:checked~.img{--c:#8FC8F2;--w:#FFFFFF;--b:#6FB3E8;background:#0E3F73}
+.cap #w3:checked~.img{--c:#FFFFFF;--w:#8FC8F2;--b:#E3EEF8;background:#2B86D9}
+.cap #w4:checked~.img{--c:#E4EE6A;--w:#2B86D9;--b:#CFD94F;background:#2B86D9}
+.cap #w1:checked~.body label[for=w1],.cap #w2:checked~.body label[for=w2],.cap #w3:checked~.body label[for=w3],.cap #w4:checked~.body label[for=w4]{border-color:var(--navy);box-shadow:0 0 0 2px var(--yellow)}
+.cap #w1:checked~.body .n1,.cap #w2:checked~.body .n2,.cap #w3:checked~.body .n3,.cap #w4:checked~.body .n4{display:block}
+.pill.ltd{background:var(--yellow);color:var(--navy)}
+.collab{margin-top:28px;display:grid;grid-template-columns:1fr 1.3fr;border-radius:24px;overflow:hidden;background:var(--navy);color:var(--white)}
+.collab .vis{background:linear-gradient(135deg,#2B86D9,#8FC8F2);display:flex;align-items:center;justify-content:center;gap:14px;padding:32px;min-height:240px}
+.collab .txt{padding:36px}
+.collab h3{font-size:26px;font-weight:800;margin:10px 0 8px}
+.collab p{color:#B9CDE3;font-size:15px;margin-bottom:16px}
+.collab .cols{display:flex;gap:8px;margin-bottom:20px}
+.collab .cols span{width:26px;height:26px;border-radius:50%;border:2px solid rgba(255,255,255,.4)}
+@media (max-width:800px){.collab{grid-template-columns:1fr}}
+.more{margin-top:40px}
+.more h3.t{font-size:20px;font-weight:800;color:var(--navy);margin-bottom:16px}
+.mgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.mi{background:var(--sand);border:1px solid var(--line);border-radius:18px;padding:18px;display:flex;flex-direction:column;gap:6px}
+.mi .ic{width:52px;height:52px;border-radius:14px;background:var(--blue);display:grid;place-items:center;margin-bottom:6px}
+.mi b{font-size:15px;color:var(--navy)}
+.mi p{font-size:12.5px;color:var(--muted);flex:1}
+.mi .p{font-weight:700;color:var(--blue);font-size:13px}
+.mi .pill{align-self:flex-start;background:var(--white)}
+@media (max-width:1000px){.mgrid{grid-template-columns:repeat(3,1fr)}}
+@media (max-width:600px){.mgrid{grid-template-columns:1fr 1fr}}
+.cap input{position:absolute;opacity:0;pointer-events:none}
+.cap .img{transition:background .25s}
+.cap #cap1:checked~.img{--c:#8FC8F2;--w:#E4EE6A;--b:#6FB3E8;background:#082B52}
+.cap #cap2:checked~.img{--c:#8FC8F2;--w:#FFFFFF;--b:#6FB3E8;background:#0E3F73}
+.cap #cap3:checked~.img{--c:#FFFFFF;--w:#8FC8F2;--b:#E3EEF8;background:#2B86D9}
+.cap #cap4:checked~.img{--c:#E4EE6A;--w:#2B86D9;--b:#CFD94F;background:#2B86D9}
+.sw{display:flex;gap:8px;margin:4px 0 12px}
+.sw label{width:30px;height:30px;border-radius:50%;cursor:pointer;border:2px solid var(--line);position:relative;overflow:hidden}
+.sw label i{position:absolute;left:0;right:0;bottom:0;height:40%}
+.cap #cap1:checked~.body label[for=cap1],.cap #cap2:checked~.body label[for=cap2],.cap #cap3:checked~.body label[for=cap3],.cap #cap4:checked~.body label[for=cap4]{border-color:var(--navy);box-shadow:0 0 0 2px var(--yellow)}
+.cap .cn{font-size:13px;color:var(--muted);display:none}
+.cap #cap1:checked~.body .n1,.cap #cap2:checked~.body .n2,.cap #cap3:checked~.body .n3,.cap #cap4:checked~.body .n4{display:block}
+.mc{border-radius:22px;overflow:hidden;border:1px solid var(--line);background:var(--white)}
+.mc .img{aspect-ratio:4/3;background:var(--blue);display:grid;place-items:center}
+.mc .body{padding:22px}
+.mc h3{font-size:18px;font-weight:800;color:var(--navy)}
+.mc p{font-size:14px;color:var(--muted);margin:6px 0 12px}
+.mc .p{font-weight:700;color:var(--blue)}
+.pill{display:inline-block;font-size:11px;font-weight:600;padding:4px 10px;border-radius:999px;background:var(--sand);color:var(--deep);margin-right:6px}
+/* facts */
+.facts{background:var(--blue);color:var(--white)}
+.facts h2{color:var(--white)}.facts .eyebrow{color:var(--yellow)}
+.fgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:40px}
+.fact{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:20px;padding:24px;display:flex;gap:16px}
+.fact .ic{flex:none;width:48px;height:48px;border-radius:50%;background:var(--yellow);display:grid;place-items:center}
+.fact b{font-family:Montserrat;font-size:22px;display:block;color:var(--yellow)}
+.fact p{font-size:14px;color:#E6F1FC}
+/* map */
+.map .grid{display:grid;grid-template-columns:1.4fr 1fr;gap:32px;margin-top:40px;align-items:start}
+.mapbox{border-radius:24px;overflow:hidden;background:#CFE6F8;aspect-ratio:4/3;position:relative;border:1px solid var(--line)}
+.sites{list-style:none}
+.sites li{display:flex;gap:14px;align-items:center;padding:14px 0;border-bottom:1px solid var(--line)}
+.sites .n{width:30px;height:30px;border-radius:50%;background:var(--blue);color:var(--white);font-weight:700;font-size:13px;display:grid;place-items:center;flex:none}
+.sites .lab .n{background:var(--yellow);color:var(--navy)}
+.sites b{font-size:15px;color:var(--navy);display:block}.sites small{font-size:13px;color:var(--muted)}
+/* partners */
+.partners{background:var(--sand)}
+.logos{display:grid;grid-template-columns:repeat(6,1fr);gap:14px;margin:40px 0 28px}
+.logo{aspect-ratio:3/2;background:var(--white);border:1px solid var(--line);border-radius:16px;display:grid;place-items:center;font-size:13px;font-weight:600;color:var(--muted);text-align:center;padding:8px}
+.pband{display:flex;justify-content:space-between;align-items:center;gap:24px;background:var(--navy);color:var(--white);border-radius:24px;padding:32px 36px}
+.pband h3{font-size:24px;font-weight:800}.pband p{color:#B9CDE3;font-size:15px}
+/* ibf x tud */
+.years{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-top:40px;position:relative}
+.yc{border-radius:20px;border:1px solid var(--line);padding:22px;background:var(--white)}
+.yc .y{font-family:Montserrat;font-size:30px;font-weight:900;color:var(--blue)}
+.yc h3{font-size:15px;font-weight:700;color:var(--navy);margin:8px 0 6px}
+.yc p{font-size:13px;color:var(--muted)}
+.bar{height:6px;border-radius:6px;background:var(--line);margin-top:16px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--blue)}
+.yc.now{background:var(--navy);border-color:var(--navy)}
+.yc.now .y{color:var(--yellow)}.yc.now h3{color:var(--white)}.yc.now p{color:#B9CDE3}
+.yc.now .bar{background:rgba(255,255,255,.2)}.yc.now .bar i{background:var(--yellow)}
+.status{display:inline-block;font-size:11px;font-weight:600;margin-top:10px;padding:3px 9px;border-radius:999px;background:var(--sand);color:var(--deep)}
+.yc.now .status{background:var(--yellow);color:var(--navy)}
+/* faq */
+.faq .grid{display:grid;grid-template-columns:1fr 1.4fr;gap:48px}
+details.q{border-bottom:1px solid var(--line);padding:18px 0}
+details.q summary{cursor:pointer;font-weight:600;font-size:16px;color:var(--navy);list-style:none;display:flex;justify-content:space-between}
+details.q summary::after{content:"+";color:var(--blue);font-size:22px;line-height:1}
+details.q[open] summary::after{content:"−"}
+details.q p{color:var(--muted);font-size:15px;margin-top:10px}
+/* footer */
+.foot{background:var(--navy);color:#B9CDE3;padding:72px 0 32px;font-size:14px}
+.foot .grid{display:grid;grid-template-columns:1.5fr 1fr 1fr 1.3fr;gap:32px}
+.foot h4{color:var(--white);font-size:14px;margin-bottom:12px;font-family:Montserrat}
+.foot a{display:block;padding:4px 0}
+.foot input{width:100%;padding:12px 14px;border-radius:999px;border:0;font-family:Poppins;margin:10px 0}
+.foot .bottom{border-top:1px solid rgba(255,255,255,.12);margin-top:48px;padding-top:20px;display:flex;justify-content:space-between;font-size:12px}
+/* responsive */
+@media (max-width:1000px){
+ .links{display:none}
+ .hero .wrap,.about .grid,.map .grid,.faq .grid{grid-template-columns:1fr}
+ .datecard{justify-self:start}
+ .wm .r1,.wm .four,.wm .r2{font-size:72px}
+ .prog,.fgrid,.merch .grid{grid-template-columns:1fr 1fr}
+ .tiers{grid-template-columns:1fr 1fr}
+ .stats{grid-template-columns:1fr 1fr}
+ .logos{grid-template-columns:repeat(3,1fr)}
+ .years{grid-template-columns:1fr 1fr}
+ .foot .grid{grid-template-columns:1fr 1fr}
+}
+@media (max-width:600px){
+ .wrap{padding:0 16px}
+ section{padding:64px 0}
+ h2{font-size:30px}
+ .wm .r1,.wm .four,.wm .r2{font-size:48px}
+ .wm .four{margin-left:10px}
+ .nav .right>.btn-y{display:none}
+ .member summary{padding:8px 12px}
+ .prog,.fgrid,.merch .grid,.tiers,.years,.foot .grid{grid-template-columns:1fr}
+ .logos{grid-template-columns:1fr 1fr}
+ .pband{flex-direction:column;align-items:flex-start}
+ .datecard{padding:28px}
+ .datecard .d{font-size:48px}
+}
+
+.view[hidden]{display:none!important}
+.links a.on{color:var(--yellow)}
+.burger{display:none;position:relative}
+.burger summary{list-style:none;cursor:pointer;padding:8px;border:1px solid rgba(255,255,255,.35);border-radius:10px;display:grid;place-items:center}
+.burger summary::-webkit-details-marker{display:none}
+.burger .menu{position:absolute;right:0;top:48px;background:var(--white);color:var(--ink);border-radius:14px;box-shadow:0 12px 32px rgba(8,43,82,.25);padding:8px;min-width:200px;z-index:30}
+.burger .menu a{display:block;padding:10px 12px;border-radius:8px;font-size:15px;font-weight:500}
+.burger .menu a.on{background:var(--sand);color:var(--blue)}
+.teasers{background:var(--white)}
+.tgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:36px}
+.tcard{display:flex;flex-direction:column;gap:8px;padding:28px;border-radius:22px;background:var(--sand);border:1px solid var(--line);transition:transform .2s,box-shadow .2s}
+.tcard:hover{transform:translateY(-3px);box-shadow:0 16px 36px rgba(8,43,82,.12)}
+.tcard .tnum{align-self:flex-start;font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;background:var(--yellow);color:var(--navy);padding:5px 11px;border-radius:999px}
+.tcard h3{font-size:22px;font-weight:800;color:var(--navy)}
+.tcard p{color:var(--muted);font-size:15px;flex:1}
+.tcard .tlink{color:var(--blue);font-weight:600}
+@media (max-width:1000px){.burger{display:block}.tgrid{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:reduce){.tcard{transition:none}}
+
+.shopbar{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:14px;margin-top:28px;padding:14px;background:var(--sand);border:1px solid var(--line);border-radius:18px}
+.fchips{display:flex;flex-wrap:wrap;gap:8px}
+.fchips button{font:600 14px Poppins,sans-serif;padding:8px 16px;border-radius:999px;border:1px solid var(--line);background:var(--white);color:var(--navy);cursor:pointer}
+.fchips button[aria-pressed="true"]{background:var(--blue);border-color:var(--blue);color:var(--white)}
+.ship{font-size:13px;color:var(--muted)}.ship b{color:var(--navy)}
+.add{margin-top:12px;width:100%;font:600 14px Poppins,sans-serif;padding:11px 16px;border-radius:999px;border:0;background:var(--blue);color:var(--white);cursor:pointer;transition:background .2s}
+.add:hover{background:var(--deep)}
+.add.done{background:var(--yellow);color:var(--navy)}
+.add.sm{padding:9px 12px;font-size:13px;margin-top:6px}
+.add{display:block}
+.cartbtn{position:relative;display:flex;align-items:center;gap:6px;padding:9px 13px;border-radius:999px;border:1px solid rgba(255,255,255,.35);background:transparent;color:var(--white);cursor:pointer;font:600 14px Poppins,sans-serif}
+.cartbtn span{background:var(--yellow);color:var(--navy);border-radius:999px;min-width:20px;height:20px;display:grid;place-items:center;font-size:12px;padding:0 5px}
+.drawer{position:fixed;inset:0;background:rgba(8,43,82,.45);z-index:50;display:flex;justify-content:flex-end}
+.dpanel{width:min(400px,100%);height:100%;background:var(--white);padding:24px max(24px,env(safe-area-inset-right,0px)) 24px 24px;display:flex;flex-direction:column;gap:12px;overflow-y:auto}
+.dhead{display:flex;justify-content:space-between;align-items:center}.dhead h3{font-size:22px;font-weight:800;color:var(--navy)}
+.dclose{border:0;background:var(--sand);width:36px;height:36px;border-radius:50%;font-size:22px;cursor:pointer;color:var(--navy)}
+#dlist{list-style:none;display:flex;flex-direction:column;gap:8px}
+#dlist li{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 14px;background:var(--sand);border-radius:12px;font-size:14px;color:var(--navy)}
+#dlist button{border:0;background:none;color:var(--muted);cursor:pointer;font-size:13px;text-decoration:underline}
+.dempty{color:var(--muted);font-size:14px}
+.dfoot{margin-top:auto;display:flex;flex-direction:column;gap:10px;font-size:13px;color:var(--muted)}
+.dmsg{background:var(--sand);border-radius:12px;padding:12px;color:var(--navy)}
+[data-cat].off{display:none!important}
+@media (max-width:600px){.cartbtn{padding:8px 10px}}
+
+.drawer[hidden],.modal[hidden]{display:none!important}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.lang button{border:0;background:transparent;color:inherit;font:600 12px Poppins,sans-serif;padding:6px 10px;cursor:pointer}
+.lang button.on{background:var(--white);color:var(--navy)}
+.member .menu button{display:block;width:100%;text-align:left;padding:10px 12px;border-radius:8px;font:14px Poppins,sans-serif;border:0;background:none;color:var(--ink);cursor:pointer}
+.member .menu button:hover{background:var(--sand)}
+.toggle button{border:0;background:none;font:600 14px Poppins,sans-serif;padding:8px 18px;border-radius:999px;color:var(--muted);cursor:pointer}
+.toggle button.on{background:var(--blue);color:var(--white)}
+.price .per{font-size:13px;color:var(--muted);margin-left:4px}
+button.vid{border:1px solid rgba(255,255,255,.12);color:var(--white);text-align:left;cursor:pointer;font-family:Poppins,sans-serif}
+button.vid:hover .play{transform:scale(1.08)}.vid .play{transition:transform .2s}
+.vid .vt b{font-family:Montserrat;font-size:16px;display:block}.vid .vt small{display:block;font-size:12px;color:#B9CDE3}
+.sites li{cursor:pointer;border-radius:10px;padding-left:8px;padding-right:8px;transition:background .2s}
+.sites li:hover,.sites li.act{background:var(--sand)}
+.sites li.act .n{box-shadow:0 0 0 3px var(--yellow)}
+
+.foot form{display:flex;flex-direction:column;align-items:flex-start}
+.okmsg{color:var(--yellow);font-size:13px;margin-top:8px}
+.modal{position:fixed;inset:0;background:rgba(8,43,82,.55);z-index:60;display:grid;place-items:center;padding:16px}
+.mbox{position:relative;width:min(560px,100%);max-height:calc(100vh - 32px);overflow-y:auto;background:var(--white);border-radius:24px;padding:32px;box-shadow:0 30px 60px rgba(4,25,50,.35)}
+.mx{position:absolute;top:16px;right:16px}
+.mbox h3{font-family:Montserrat;font-size:26px;font-weight:800;color:var(--navy);margin-bottom:6px;padding-right:40px}
+.mbox .msub{color:var(--muted);font-size:15px;margin-bottom:18px}
+.mbox form{display:flex;flex-direction:column;gap:12px}
+.fld{display:flex;flex-direction:column;gap:5px;font-size:13px;font-weight:600;color:var(--navy)}
+.fld input,.fld select,.fld textarea{font:15px Poppins,sans-serif;padding:11px 14px;border:1px solid var(--line);border-radius:12px;background:var(--white);color:var(--ink)}
+.fld input:focus,.fld select:focus,.fld textarea:focus{outline:2px solid var(--blue);outline-offset:1px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.checks{display:flex;flex-wrap:wrap;gap:8px}
+.checks label{display:flex;gap:6px;align-items:center;font-weight:500;font-size:14px;padding:8px 12px;border:1px solid var(--line);border-radius:999px;cursor:pointer}
+.mbox .btn{justify-content:center;margin-top:6px}
+.mlink{background:none;border:0;color:var(--blue);font:600 14px Poppins,sans-serif;cursor:pointer;text-decoration:underline;align-self:flex-start}
+.done{text-align:center;padding:12px 0}
+.done .ok{width:64px;height:64px;border-radius:50%;background:var(--yellow);display:grid;place-items:center;margin:0 auto 16px}
+.done p{color:var(--muted);margin:8px 0 18px}
+.vbox{aspect-ratio:16/9;border-radius:16px;background:linear-gradient(135deg,#1B5C9E,#082B52);display:grid;place-items:center;color:#B9CDE3;text-align:center;padding:16px;margin-top:8px}
+.sum{background:var(--sand);border-radius:12px;padding:12px 14px;font-size:14px;color:var(--navy)}
+.sum li{list-style:none;padding:2px 0}
+@media (max-width:600px){.row2{grid-template-columns:1fr}.mbox{padding:24px}}
+
+.tabs{background:var(--deep);border-top:1px solid rgba(255,255,255,.1)}
+.tabsin{max-width:1200px;margin:0 auto;padding:0 max(16px,env(safe-area-inset-right,0px)) 0 max(16px,env(safe-area-inset-left,0px));display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}
+.tabsin::-webkit-scrollbar{display:none}
+.tabs a{flex:none;padding:14px 18px;font-size:14px;font-weight:600;color:#CFE2F5;border-bottom:3px solid transparent;white-space:nowrap}
+.tabs a:hover{color:var(--white)}
+.tabs a.on{color:var(--yellow);border-bottom-color:var(--yellow)}
+@media (max-width:600px){.tabs a{padding:12px 12px;font-size:13px}.nav .mini{font-size:15px}}
+
+.nav .wrap{gap:12px}
+@media (max-width:600px){.nav .wrap{gap:8px}.right{gap:6px}.mlab{display:none}.member summary svg:last-child{display:none}.member summary{padding:8px 10px}.lang button{padding:6px 8px}.nav .mini{font-size:13px;letter-spacing:0}.cartbtn{padding:7px 9px}}
+
+.mapbox{aspect-ratio:1/1;--land:#F4F8FC;--shore:#8FBDE3}
+.mlbl{font:600 10px Poppins,sans-serif;fill:#0E3F73}
+.mbig{font:800 18px Montserrat,sans-serif;fill:#9CB8D3;letter-spacing:.3em}
+.msea{font:italic 500 11px Poppins,sans-serif;fill:#5E8DB8}
+g.pin{cursor:pointer}g.pin.act circle{stroke:#E4EE6A;stroke-width:4}
+.mnote{font-size:12px;color:var(--muted);margin-top:8px}
+</style>
+
+</head><body>
+
+<div class="page">
+
+<!-- NAV -->
+<header class="nav">
+ <div class="wrap">
+  <a href="#home" class="mini" aria-label="Home">CORAL <b>4.0</b> CONNECT</a>
+  <div class="right">
+   <div class="lang" role="group" aria-label="Language"><button type="button" data-lang="en" class="on">EN</button><button type="button" data-lang="id">ID</button></div>
+   <details class="member">
+    <summary aria-label="Member"><svg class="uic" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg><span class="mlab">Member</span>
+     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M6 9l6 6 6-6"/></svg>
+    </summary>
+    <div class="menu"><button type="button" data-modal="login">Log in</button><button type="button" data-modal="register">Register</button><button type="button" data-modal="mycoral">My adopted coral</button></div>
+   </details>
+   <button type="button" class="cartbtn" id="cartbtn" aria-label="Open cart"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 4h2l2.4 11.2a2 2 0 002 1.8h7.7a2 2 0 002-1.6L21 8H6"/><circle cx="10" cy="20.5" r="1.3"/><circle cx="17" cy="20.5" r="1.3"/></svg><span id="cartcount">0</span></button>
+   <a href="#donate" class="btn btn-y">Donate</a>
+  </div>
+ </div>
+ <nav class="tabs" id="mainnav" aria-label="Pages"><div class="tabsin">
+  <a href="#home">Home</a><a href="#about">About</a><a href="#donate">Adopt a coral</a><a href="#shop">Merch</a><a href="#reef">Our reef</a><a href="#partners">Partners</a><a href="#faq">FAQ</a>
+ </div></nav>
+</header>
+
+<main class="view" data-page="home">
+<!-- HERO -->
+<section class="hero" id="top">
+ <div class="wrap">
+  <div>
+   <div class="wm">
+    <div class="r1">C<svg class="o" viewBox="0 0 100 100"><circle cx="50" cy="50" r="46" fill="#E4EE6A"/><path d="M22 40c8-10 18 6 26-4s16 8 26-2M18 56c10-8 18 8 28-2s20 8 34-4M26 72c8-6 16 6 24-2s16 6 24-2M34 26c6-4 12 4 18 0s12 4 16 0" fill="none" stroke="#2B86D9" stroke-width="5" stroke-linecap="round"/></svg>RAL<span class="four">4.0</span></div>
+    <div class="r2">CONNECT</div>
+   </div>
+   <p class="slogan">Connecting minds and reefs. Three days in Lombok where <em>science, community and business</em> meet to restore coral.</p>
+   <div class="cta">
+    <button type="button" class="btn btn-y" data-modal="ticket">Join the event</button>
+    <a href="#donate" class="btn btn-o">Adopt a coral</a>
+   </div>
+  </div>
+  <div class="datecard" id="tickets">
+   <span class="tag">Edition 4</span>
+   <div>
+    <div class="d">11–13</div>
+    <div class="m">December 2026</div>
+   </div>
+   <div class="count" id="countdown"><div><b id="cd-d">0</b><small>days</small></div><div><b id="cd-h">0</b><small>hours</small></div><div><b id="cd-m">0</b><small>min</small></div></div>
+   <div class="loc">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2B86D9" stroke-width="2.2"><path d="M12 22s7-6.2 7-12a7 7 0 10-14 0c0 5.8 7 12 7 12z"/><circle cx="12" cy="10" r="2.5"/></svg>
+    <span><b style="color:#082B52">Marina by the Bay</b><br>West Lombok, Indonesia</span>
+   </div>
+  </div>
+ </div>
+ <svg class="wave" viewBox="0 0 1440 80" preserveAspectRatio="none"><path d="M0 40 C 240 80 480 0 720 30 S 1200 70 1440 30 V80 H0Z" fill="#fff"/></svg>
+</section>
+
+<!-- RECAP -->
+<section class="recap">
+ <div class="wrap">
+  <div class="eyebrow" style="color:#E4EE6A">Look back</div>
+  <h2>Three editions so far</h2>
+  <p class="lead">What started as a small gathering has grown into a yearly reef community.</p>
+  <div class="stats">
+   <div class="stat"><b>3</b><span>editions since 2023</span></div>
+   <div class="stat"><b>80+</b><span>participants per edition</span></div>
+   <div class="stat"><b>[X]</b><span>corals planted</span></div>
+   <div class="stat"><b>[X]</b><span>partners involved</span></div>
+  </div>
+ </div>
+ <div class="strip">
+  <div class="track">
+   <button type="button" class="vid" data-modal="video" data-title="Coral Connect 1.0"><span class="play"><svg width="20" height="20" viewBox="0 0 24 24" fill="#082B52"><path d="M8 5v14l11-7z"/></svg></span><span class="vt"><b>Coral Connect 1.0</b><small>Aftermovie 2023</small></span></button>
+   <button type="button" class="vid" data-modal="video" data-title="Coral Connect 2.0"><span class="play"><svg width="20" height="20" viewBox="0 0 24 24" fill="#082B52"><path d="M8 5v14l11-7z"/></svg></span><span class="vt"><b>Coral Connect 2.0</b><small>Aftermovie 2024</small></span></button>
+   <button type="button" class="vid" data-modal="video" data-title="Coral Connect 3.0"><span class="play"><svg width="20" height="20" viewBox="0 0 24 24" fill="#082B52"><path d="M8 5v14l11-7z"/></svg></span><span class="vt"><b>Coral Connect 3.0</b><small>Aftermovie 2025</small></span></button>
+   <button type="button" class="vid" data-modal="video" data-title="Mangrove tour"><span class="play"><svg width="20" height="20" viewBox="0 0 24 24" fill="#082B52"><path d="M8 5v14l11-7z"/></svg></span><span class="vt"><b>Mangrove tour</b><small>Highlights 2025</small></span></button>
+   <button type="button" class="vid" data-modal="video" data-title="Coral Connect 1.0"><span class="play"><svg width="20" height="20" viewBox="0 0 24 24" fill="#082B52"><path d="M8 5v14l11-7z"/></svg></span><span class="vt"><b>Coral Connect 1.0</b><small>Aftermovie 2023</small></span></button>
+   <button type="button" class="vid" data-modal="video" data-title="Coral Connect 2.0"><span class="play"><svg width="20" height="20" viewBox="0 0 24 24" fill="#082B52"><path d="M8 5v14l11-7z"/></svg></span><span class="vt"><b>Coral Connect 2.0</b><small>Aftermovie 2024</small></span></button>
+   <button type="button" class="vid" data-modal="video" data-title="Coral Connect 3.0"><span class="play"><svg width="20" height="20" viewBox="0 0 24 24" fill="#082B52"><path d="M8 5v14l11-7z"/></svg></span><span class="vt"><b>Coral Connect 3.0</b><small>Aftermovie 2025</small></span></button>
+   <button type="button" class="vid" data-modal="video" data-title="Mangrove tour"><span class="play"><svg width="20" height="20" viewBox="0 0 24 24" fill="#082B52"><path d="M8 5v14l11-7z"/></svg></span><span class="vt"><b>Mangrove tour</b><small>Highlights 2025</small></span></button>
+  </div>
+ </div>
+</section>
+
+<section class="teasers">
+ <div class="wrap">
+  <div class="eyebrow">Get involved</div>
+  <h2>Three ways to help the reef</h2>
+  <div class="tgrid">
+   <a class="tcard" href="#donate"><span class="tnum">Adopt</span><h3>Adopt a coral</h3><p>Give a coral a home and follow how it grows, from a simple donation to a photo every 3 months.</p><span class="tlink">Choose your level &rarr;</span></a>
+   <a class="tcard" href="#shop"><span class="tnum">Shop</span><h3>Wear the reef</h3><p>Shirts, caps, stickers and more. All profit goes to coral restoration.</p><span class="tlink">Visit the shop &rarr;</span></a>
+   <a class="tcard" href="#reef"><span class="tnum">Learn</span><h3>Our reef</h3><p>Why reefs matter and the seven places along Lombok where IBF restores coral.</p><span class="tlink">Explore the sites &rarr;</span></a>
+  </div>
+ </div>
+</section>
+</main>
+
+<main class="view" data-page="about" hidden>
+<!-- ABOUT + PROGRAM -->
+<section class="about" id="about">
+ <div class="wrap">
+  <div class="grid">
+   <div>
+    <div class="eyebrow">About Coral Connect</div>
+    <h2>A meeting place for everyone who cares about the reef</h2>
+   </div>
+   <div>
+    <p>Coral Connect is an annual event organised by Indonesian Blue Foundation that brings together marine scientists, local communities, students, entrepreneurs and government. We share knowledge, build partnerships and turn ideas into real coral restoration along the coast of Lombok.</p>
+    <p>This fourth edition focuses on connecting local knowledge with new technology, and on making reef restoration a shared responsibility. [FINAL TEXT FROM HENRY]</p>
+    <a href="#program" class="btn btn-ob" style="margin-top:8px">See the program</a>
+   </div>
+  </div>
+  <div class="prog" id="program">
+   <div class="pc"><div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M12 3a3 3 0 013 3v5a3 3 0 01-6 0V6a3 3 0 013-3zM5 11a7 7 0 0014 0M12 18v3"/></svg></div><h3>Talks and panels</h3><p>Scientists, fishers and founders on what works for reef restoration in Indonesia.</p><span class="day">Day 1</span></div>
+   <div class="pc"><div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M14.7 6.3a4 4 0 01-5.4 5.4L4 17v3h3l5.3-5.3a4 4 0 015.4-5.4L15 12l-3-3z"/></svg></div><h3>Hands-on workshops</h3><p>Build coral frames, learn reef monitoring and try out restoration techniques.</p><span class="day">Day 1–2</span></div>
+   <div class="pc"><div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V4h8v3"/></svg></div><h3>Expo and booths</h3><p>Local businesses, NGOs and student projects show their solutions.</p><span class="day">Day 2</span></div>
+   <div class="pc"><div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M12 22V10M12 10c-4 0-6-3-6-7 4 0 6 3 6 7zm0 0c4 0 6-3 6-7-4 0-6 3-6 7zM4 22h16"/></svg></div><h3>Mangrove eco-tour</h3><p>A guided tour through the mangroves with planting together.</p><span class="day">Day 2</span></div>
+   <div class="pc"><div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 015 0c0 2-2.5 2-2.5 4M12 17h.01"/></svg></div><h3>Ocean pub quiz</h3><p>A relaxed evening with questions about the sea, the reef and Lombok.</p><span class="day">Day 2 evening</span></div>
+   <div class="pc"><div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6M15 20c0-2.5 1.5-4.5 4-4.5"/></svg></div><h3>Networking and closing</h3><p>Meet partners, share outcomes and set goals for the year ahead.</p><span class="day">Day 3</span></div>
+  </div>
+ </div>
+</section>
+
+</main>
+
+<main class="view" data-page="donate" hidden>
+<!-- DONATE -->
+<section class="donate" id="donate">
+ <div class="wrap">
+  <div class="eyebrow">Adopt a coral</div>
+  <h2>Give a coral a home on the reef</h2>
+  <p class="lead">Every donation goes directly to coral restoration by Indonesian Blue Foundation. Choose how close you want to follow your coral.</p>
+  <div class="toggle" role="group" aria-label="Frequency"><button type="button" data-freq="once" class="on">One time</button><button type="button" data-freq="month">Monthly</button><button type="button" data-freq="year">Yearly</button></div>
+  <div class="tiers">
+   <div class="tier"><span class="lvl">Level 1</span><h3>Supporter</h3><div class="price">[PRICE] <small>IDR</small><small class="per"></small></div><ul><li>Support the restoration</li><li>Thank-you email</li></ul><button type="button" class="btn btn-ob" data-modal="donate" data-tier="Supporter">Donate</button></div>
+   <div class="tier"><span class="lvl">Level 2</span><h3>Coral Friend</h3><div class="price">[PRICE] <small>IDR</small><small class="per"></small></div><ul><li>Adopt one coral</li><li>We tell you which site it grows at</li></ul><button type="button" class="btn btn-ob" data-modal="donate" data-tier="Coral Friend">Adopt</button></div>
+   <div class="tier hot"><span class="lvl">Level 3</span><h3>Coral Keeper</h3><div class="price">[PRICE] <small>IDR</small><small class="per"></small></div><ul><li>Everything in Coral Friend</li><li>Name card on your coral</li><li>Photo at planting</li></ul><button type="button" class="btn btn-b" data-modal="donate" data-tier="Coral Keeper">Adopt</button></div>
+   <div class="tier"><span class="lvl">Level 4</span><h3>Reef Guardian</h3><div class="price">[PRICE] <small>IDR</small><small class="per"></small></div><ul><li>Everything in Coral Keeper</li><li>Choose the site yourself</li></ul><button type="button" class="btn btn-ob" data-modal="donate" data-tier="Reef Guardian">Adopt</button></div>
+   <div class="tier"><span class="lvl">Level 5</span><h3>Reef Champion</h3><div class="price">[PRICE] <small>IDR</small><small class="per"></small></div><ul><li>Everything in Reef Guardian</li><li>New photo every 3 months</li><li>Name on the donor wall</li></ul><button type="button" class="btn btn-ob" data-modal="donate" data-tier="Reef Champion">Adopt</button></div>
+  </div>
+  <p class="note">Payment by [PAYMENT METHODS]. International donors are welcome. Prices shown in IDR, with a currency switch to EUR and USD.</p>
+ </div>
+</section>
+
+</main>
+
+<main class="view" data-page="shop" hidden>
+<!-- MERCH -->
+<section class="merch" id="shop-top">
+ <div class="wrap">
+  <div class="eyebrow">Merch shop</div>
+  <h2>Wear the reef</h2>
+  <p class="lead">All profit goes to coral restoration. Shirts can be picked up at Coral Connect or delivered within Indonesia.</p>
+  <div class="shopbar">
+   <div class="fchips" role="group" aria-label="Filter products"><button type="button" data-f="all" aria-pressed="true">All</button><button type="button" data-f="clothing" aria-pressed="false">Clothing</button><button type="button" data-f="caps" aria-pressed="false">Caps</button><button type="button" data-f="accessories" aria-pressed="false">Accessories</button><button type="button" data-f="collab" aria-pressed="false">Collab</button></div>
+   <span class="ship"><b>Pick up at CC</b> or delivery in Indonesia. Small items ship worldwide.</span>
+  </div>
+  <div class="grid">
+   <div class="mc" data-cat="clothing"><div class="img"><svg width="120" height="120" viewBox="0 0 24 24" fill="none" stroke="#E4EE6A" stroke-width="1.2"><path d="M8 3l-5 3 2 4 2-1v12h10V9l2 1 2-4-5-3c0 2-2 3-4 3S8 5 8 3z"/></svg></div><div class="body"><span class="pill">Indonesia only</span><span class="pill">Pick up at CC</span><h3>Coral Connect 4.0 shirt</h3><p>Organic cotton, logo print, sizes S to XL.</p><span class="p">[PRICE] IDR</span><button type="button" class="add" data-add="Coral Connect 4.0 shirt">Add to cart</button></div></div>
+   <div class="mc" data-cat="accessories"><div class="img" style="background:#E4EE6A"><svg width="120" height="120" viewBox="0 0 24 24" fill="none" stroke="#2B86D9" stroke-width="1.2"><rect x="4" y="4" width="10" height="10" rx="5"/><rect x="10" y="10" width="10" height="10" rx="2"/></svg></div><div class="body"><span class="pill">Ships worldwide</span><h3>Sticker pack</h3><p>Five waterproof reef stickers. Included free with yearly subscriptions abroad.</p><span class="p">[PRICE] IDR</span><button type="button" class="add" data-add="Sticker pack">Add to cart</button></div></div>
+   <div class="mc" data-cat="clothing"><div class="img" style="background:#082B52"><svg width="120" height="120" viewBox="0 0 24 24" fill="none" stroke="#E4EE6A" stroke-width="1.2"><path d="M8 3l-5 3 2 4 2-1v12h10V9l2 1 2-4-5-3c0 2-2 3-4 3S8 5 8 3z"/><circle cx="12" cy="13" r="2.5"/></svg></div><div class="body"><span class="pill">Best value</span><h3>Combo: shirt and stickers</h3><p>The shirt plus the full sticker pack.</p><span class="p">about 300,000 IDR</span><button type="button" class="add" data-add="Combo: shirt and stickers">Add to cart</button></div></div>
+   <div class="mc cap" data-cat="caps">
+    <input type="radio" name="capw" id="w1" checked><input type="radio" name="capw" id="w2"><input type="radio" name="capw" id="w3"><input type="radio" name="capw" id="w4">
+    <div class="img"><svg width="170" height="120" viewBox="0 0 170 120"><path d="M22 82 Q20 30 72 26 Q122 26 126 82 Z" fill="var(--c)"/><path d="M118 78 Q156 74 162 88 Q140 96 112 90 Z" fill="var(--b)"/><path d="M22 82 Q74 90 126 82 L126 88 Q74 97 22 88 Z" fill="var(--b)"/><circle cx="70" cy="27" r="4" fill="var(--b)"/><g fill="none" stroke="var(--w)" stroke-width="4.5" stroke-linecap="round"><path d="M50 48 q6 -7 12 0 t12 0 t12 0 t12 0"/><path d="M50 60 q6 -7 12 0 t12 0 t12 0 t12 0"/><path d="M50 72 q6 -7 12 0 t12 0 t12 0 t12 0"/></g></svg></div>
+    <div class="body"><span class="pill">Indonesia only</span><span class="pill">Pick up at CC</span><h3>IBF wave cap</h3><p>The three waves of the IBF logo embroidered on the front, adjustable strap.</p>
+     <div class="sw"><label for="w1" style="background:#8FC8F2" title="Light blue, yellow waves"><i style="background:#E4EE6A"></i></label><label for="w2" style="background:#8FC8F2" title="Light blue, white waves"><i style="background:#fff"></i></label><label for="w3" style="background:#fff" title="White, light blue waves"><i style="background:#8FC8F2"></i></label><label for="w4" style="background:#E4EE6A" title="Yellow, blue waves"><i style="background:#2B86D9"></i></label></div>
+     <span class="cn n1">Light blue with yellow waves</span><span class="cn n2">Light blue with white waves</span><span class="cn n3">White with light blue waves</span><span class="cn n4">Yellow with blue waves</span>
+     <span class="p">[PRICE] IDR</span><button type="button" class="add" data-add="IBF wave cap">Add to cart</button></div>
+   </div>
+   <div class="mc cap" data-cat="caps">
+    <input type="radio" name="cap" id="cap1" checked><input type="radio" name="cap" id="cap2"><input type="radio" name="cap" id="cap3"><input type="radio" name="cap" id="cap4">
+    <div class="img"><svg width="170" height="120" viewBox="0 0 170 120"><path d="M22 82 Q20 30 72 26 Q122 26 126 82 Z" fill="var(--c)"/><path d="M118 78 Q156 74 162 88 Q140 96 112 90 Z" fill="var(--b)"/><path d="M22 82 Q74 90 126 82 L126 88 Q74 97 22 88 Z" fill="var(--b)"/><circle cx="70" cy="27" r="4" fill="var(--b)"/><circle cx="74" cy="58" r="21" fill="var(--w)"/><g fill="none" stroke="var(--c)" stroke-width="2.6" stroke-linecap="round"><path d="M59 50c3-4 6 2 9-1s6 3 9 0 5 2 8 0"/><path d="M56 58c3-3 6 3 9 0s6 3 9 0 6 3 9 0 4 2 6 0"/><path d="M59 66c3-3 6 3 9 0s6 3 9 0 5 2 8 0"/><path d="M65 43c2-2 4 1 6 0s4 1 6 0"/><path d="M66 73c2-2 4 1 6 0s4 1 6 0"/><path d="M74 37v42" stroke-width="1.6"/></g></svg></div>
+    <div class="body"><span class="pill ltd">Limited edition</span><span class="pill">Only at CC 4.0</span><h3>Coral Connect 4.0 cap</h3><p>Limited run for this edition, with the brain coral from the Coral Connect logo embroidered on the front.</p>
+     <div class="sw"><label for="cap1" style="background:#8FC8F2" title="Light blue, yellow waves"><i style="background:#E4EE6A"></i></label><label for="cap2" style="background:#8FC8F2" title="Light blue, white waves"><i style="background:#fff"></i></label><label for="cap3" style="background:#fff" title="White, light blue waves"><i style="background:#8FC8F2"></i></label><label for="cap4" style="background:#E4EE6A" title="Yellow, blue waves"><i style="background:#2B86D9"></i></label></div>
+     <span class="cn n1">Light blue with yellow coral brain</span><span class="cn n2">Light blue with white coral brain</span><span class="cn n3">White with light blue coral brain</span><span class="cn n4">Yellow with blue coral brain</span>
+     <span class="p">[PRICE] IDR</span><button type="button" class="add" data-add="Coral Connect 4.0 cap">Add to cart</button></div>
+   </div>
+  </div>
+  <div class="collab" data-cat="collab">
+   <div class="vis">
+    <svg width="110" height="130" viewBox="0 0 110 130"><path d="M20 40h70l8 82H12z" fill="#E4EE6A"/><path d="M38 40V28a17 17 0 0134 0v12" fill="none" stroke="#082B52" stroke-width="6"/><path d="M16 80h78" stroke="#2B86D9" stroke-width="8"/></svg>
+    <svg width="90" height="110" viewBox="0 0 90 110"><rect x="14" y="30" width="62" height="74" rx="10" fill="#fff"/><path d="M30 30V20a15 15 0 0130 0v10" fill="none" stroke="#082B52" stroke-width="5"/><path d="M14 64h62" stroke="#E4EE6A" stroke-width="7"/></svg>
+   </div>
+   <div class="txt">
+    <span class="pill ltd">Collab, concept</span>
+    <h3>Coral Connect x Ticket To The Moon</h3>
+    <p>A special edition of bags made for Coral Connect 4.0 in the event colours, light blue, yellow and white. Light, strong and made in Indonesia. Part of every sale goes to coral restoration.</p>
+    <div class="cols"><span style="background:#8FC8F2"></span><span style="background:#E4EE6A"></span><span style="background:#fff"></span><span style="background:#2B86D9"></span></div>
+    <button type="button" class="btn btn-y" data-modal="notify">Notify me</button>
+   </div>
+  </div>
+  <div class="more">
+   <h3 class="t">More from the reef shop</h3>
+   <div class="mgrid">
+    <div class="mi" data-cat="accessories"><span class="ic"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#E4EE6A" stroke-width="2"><path d="M5 8h14l-1 13H6z"/><path d="M9 8V6a3 3 0 016 0v2"/><path d="M10 14l2-2 2 2M12 12v5"/></svg></span><b>Recycled totebag</b><p>Tote bag made from recycled plastic, with the Coral Connect logo.</p><span class="pill">Ships worldwide</span><span class="p">[PRICE] IDR</span><button type="button" class="add sm" data-add="Recycled totebag">Add to cart</button></div>
+    <div class="mi" data-cat="clothing"><span class="ic"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#E4EE6A" stroke-width="2"><path d="M8 3h6v9l4 3a3 3 0 01-3 5.5L8 16z"/><path d="M8 7h6"/></svg></span><b>Reef socks</b><p>Socks in IBF blue and yellow with a coral and wave pattern.</p><span class="pill">Ships worldwide</span><span class="p">[PRICE] IDR</span><button type="button" class="add sm" data-add="Reef socks">Add to cart</button></div>
+    <div class="mi" data-cat="accessories"><span class="ic"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#E4EE6A" stroke-width="2"><ellipse cx="12" cy="12" rx="9" ry="5"/><circle cx="7" cy="10.5" r="1.2" fill="#E4EE6A"/><circle cx="12" cy="9" r="1.2" fill="#E4EE6A"/><circle cx="17" cy="10.5" r="1.2" fill="#E4EE6A"/></svg></span><b>Reef bracelet</b><p>Woven bracelet in IBF blue and yellow, made locally.</p><span class="pill">Ships worldwide</span><span class="p">[PRICE] IDR</span><button type="button" class="add sm" data-add="Reef bracelet">Add to cart</button></div>
+    <div class="mi" data-cat="accessories"><span class="ic"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#E4EE6A" stroke-width="2"><path d="M10 2h4v3l2 3v12a2 2 0 01-2 2h-4a2 2 0 01-2-2V8l2-3z"/><path d="M8 13q2-1.5 4 0t4 0"/></svg></span><b>Water bottle</b><p>Reusable steel bottle with the wave logo. One less plastic bottle in the sea.</p><span class="pill">Indonesia only</span><span class="p">[PRICE] IDR</span><button type="button" class="add sm" data-add="Water bottle">Add to cart</button></div>
+    <div class="mi" data-cat="accessories"><span class="ic"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#E4EE6A" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 16l5-5 4 4 3-3 6 6"/><circle cx="16" cy="9" r="1.5"/></svg></span><b>Coral postcards</b><p>Set of postcards with photos of our own corals at the restoration sites.</p><span class="pill">Ships worldwide</span><span class="p">[PRICE] IDR</span><button type="button" class="add sm" data-add="Coral postcards">Add to cart</button></div>
+    <div class="mi" data-cat="accessories"><span class="ic"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#E4EE6A" stroke-width="2"><path d="M9 3h6v12a3 3 0 01-6 0z"/><circle cx="12" cy="7" r="1.6"/><path d="M12 18v3"/></svg></span><b>Bottle opener</b><p>Keychain bottle opener with the Coral Connect 4.0 logo.</p><span class="pill">Ships worldwide</span><span class="p">[PRICE] IDR</span><button type="button" class="add sm" data-add="Bottle opener">Add to cart</button></div>
+    <div class="mi" data-cat="accessories"><span class="ic"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#E4EE6A" stroke-width="2"><rect x="4" y="6" width="11" height="15" rx="1.5" transform="rotate(-10 9.5 13.5)"/><rect x="9" y="3" width="11" height="15" rx="1.5"/><path d="M14.5 8.5l2 2.5-2 2.5-2-2.5z"/></svg></span><b>Playing cards</b><p>A deck with a reef animal and a reef fact on every card.</p><span class="pill">Ships worldwide</span><span class="p">[PRICE] IDR</span><button type="button" class="add sm" data-add="Playing cards">Add to cart</button></div>
+    <div class="mi" data-cat="accessories"><span class="ic"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#E4EE6A" stroke-width="2"><path d="M3 9h18v5a3 3 0 01-3 3h-2.5L12 14l-3.5 3H6a3 3 0 01-3-3z"/><path d="M21 11V5"/></svg></span><b>Snorkel mask</b><p>Good quality mask to explore the reef yourself, with IBF strap.</p><span class="pill">Pick up at CC</span><span class="p">[PRICE] IDR</span><button type="button" class="add sm" data-add="Snorkel mask">Add to cart</button></div>
+   </div>
+  </div>
+ </div>
+</section>
+
+</main>
+
+<main class="view" data-page="reef" hidden>
+<!-- REEF FACTS -->
+<section class="facts">
+ <div class="wrap">
+  <div class="eyebrow">Why reefs matter</div>
+  <h2>Small animals, huge impact</h2>
+  <div class="fgrid">
+   <div class="fact"><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#082B52" stroke-width="2"><path d="M3 12c3-5 9-5 12 0-3 5-9 5-12 0zM15 12l6-4v8z"/></svg></span><div><b>25%</b><p>of all marine life depends on coral reefs, on less than 1% of the ocean floor.</p></div></div>
+   <div class="fact"><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#082B52" stroke-width="2"><path d="M2 16c2 0 2-2 4-2s2 2 4 2 2-2 4-2 2 2 4 2 2-2 4-2M2 20c2 0 2-2 4-2s2 2 4 2 2-2 4-2 2 2 4 2 2-2 4-2M12 3v8"/></svg></span><div><b>97%</b><p>of wave energy can be absorbed by a healthy reef, protecting the coast.</p></div></div>
+   <div class="fact"><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#082B52" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></svg></span><div><b>Coral Triangle</b><p>Indonesia lies in the most biodiverse reef region on earth.</p></div></div>
+   <div class="fact"><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#082B52" stroke-width="2"><path d="M14 4v10.5a4 4 0 11-4 0V4a2 2 0 014 0z"/></svg></span><div><b>+1 °C</b><p>above normal for a few weeks can already cause coral bleaching.</p></div></div>
+   <div class="fact"><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#082B52" stroke-width="2"><path d="M4 20h16M7 20V10M12 20V6M17 20v-7"/></svg></span><div><b>1–2 cm</b><p>is how much many corals grow per year, which makes restoration patient work.</p></div></div>
+   <div class="fact"><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#082B52" stroke-width="2"><path d="M12 21s-8-5-8-11a4 4 0 018-1 4 4 0 018 1c0 6-8 11-8 11z"/></svg></span><div><b>Millions</b><p>of people in Indonesia rely on reefs for food and income.</p></div></div>
+  </div>
+ </div>
+</section>
+
+<!-- MAP -->
+<section class="map" id="sites">
+ <div class="wrap">
+  <div class="eyebrow">Where we work</div>
+  <h2>Seven restoration sites along Lombok</h2>
+  <p class="lead">Restoration sites around North West Lombok, from Senggigi to the Gili islands and Tanjung.</p>
+  <div class="grid">
+   <div class="mapwrap"><div class="mapbox">
+    <svg viewBox="0 0 400 400" width="100%" height="100%" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Map of North West Lombok with the Gili islands">
+     <defs><pattern id="wv" width="24" height="12" patternUnits="userSpaceOnUse"><path d="M0 6 q6 -4 12 0 t12 0" fill="none" stroke="#B5D8F3" stroke-width="1"/></pattern></defs>
+     <rect width="400" height="400" fill="#CFE6F8"/><rect width="400" height="400" fill="url(#wv)" opacity=".6"/>
+     <path d="M418.2 60.0 L363.6 69.1 L327.3 81.8 L300.0 94.5 L272.7 109.1 L250.9 112.7 L240.0 130.9 L218.2 154.5 L190.9 167.3 L172.7 176.4 L160.0 196.4 L145.5 218.2 L136.4 240.0 L130.9 263.6 L123.6 290.9 L120.0 318.2 L112.7 345.5 L109.1 372.7 L118.2 418.2 L420 420 L420 -20 Z" fill="var(--land)" stroke="var(--shore)" stroke-width="2" stroke-linejoin="round"/>
+     <ellipse cx="100.0" cy="90.9" rx="15" ry="22" transform="rotate(8 100.0 90.9)" fill="var(--land)" stroke="var(--shore)" stroke-width="1.5"/><ellipse cx="141.8" cy="92.7" rx="10" ry="12" transform="rotate(0 141.8 92.7)" fill="var(--land)" stroke="var(--shore)" stroke-width="1.5"/><ellipse cx="185.5" cy="112.7" rx="14" ry="13" transform="rotate(0 185.5 112.7)" fill="var(--land)" stroke="var(--shore)" stroke-width="1.5"/><circle cx="327.3" cy="94.5" r="2.5" fill="var(--navy)"/><circle cx="218.2" cy="160.0" r="2.5" fill="var(--navy)"/><circle cx="120.0" cy="341.8" r="2.5" fill="var(--navy)"/><circle cx="163.6" cy="190.9" r="2.5" fill="var(--navy)"/>
+     <text x="309.1" y="272.7" text-anchor="middle" class="mbig">LOMBOK</text>
+     <text x="45.5" y="200.0" text-anchor="middle" class="msea">Lombok Strait</text>
+     <text x="272.7" y="27.3" text-anchor="middle" class="msea">Bali Sea</text>
+     <text x="100.0" y="40.0" text-anchor="middle" class="mlbl">Gili Trawangan</text><text x="147.8" y="60.0" text-anchor="start" class="mlbl">Gili Meno</text><text x="185.5" y="141.8" text-anchor="middle" class="mlbl">Gili Air</text><text x="333.3" y="105.5" text-anchor="start" class="mlbl">Tanjung</text><text x="231.5" y="170.9" text-anchor="start" class="mlbl">Bangsal</text><text x="136.9" y="345.5" text-anchor="start" class="mlbl">Senggigi</text><text x="187.8" y="200.0" text-anchor="start" class="mlbl">Kecinan</text><g class="pin" data-site="1"><circle cx="76.4" cy="69.1" r="11" fill="#2B86D9" stroke="#fff" stroke-width="2"/><text x="76.4" y="73.1" text-anchor="middle" font-family="Poppins" font-size="11" font-weight="700" fill="#fff">1</text></g><g class="pin" data-site="2"><circle cx="135" cy="128" r="11" fill="#2B86D9" stroke="#fff" stroke-width="2"/><text x="135" y="132" text-anchor="middle" font-family="Poppins" font-size="11" font-weight="700" fill="#fff">2</text></g><g class="pin" data-site="3"><circle cx="160.0" cy="196.4" r="13" fill="#E4EE6A" stroke="#082B52" stroke-width="2"/><text x="160.0" y="200.4" text-anchor="middle" font-family="Poppins" font-size="11" font-weight="700" fill="#082B52">3</text></g><g class="pin" data-site="4"><circle cx="210.9" cy="94.5" r="11" fill="#2B86D9" stroke="#fff" stroke-width="2"/><text x="210.9" y="98.5" text-anchor="middle" font-family="Poppins" font-size="11" font-weight="700" fill="#fff">4</text></g><g class="pin" data-site="5"><circle cx="272" cy="76" r="11" fill="#2B86D9" stroke="#fff" stroke-width="2"/><text x="272" y="80" text-anchor="middle" font-family="Poppins" font-size="11" font-weight="700" fill="#fff">5</text></g><g class="pin" data-site="6"><circle cx="109.1" cy="236.4" r="11" fill="#2B86D9" stroke="#fff" stroke-width="2"/><text x="109.1" y="240.4" text-anchor="middle" font-family="Poppins" font-size="11" font-weight="700" fill="#fff">6</text></g><g class="pin" data-site="7"><circle cx="90.9" cy="318.2" r="11" fill="#2B86D9" stroke="#fff" stroke-width="2"/><text x="90.9" y="322.2" text-anchor="middle" font-family="Poppins" font-size="11" font-weight="700" fill="#fff">7</text></g>
+     <g transform="translate(370 30)"><circle r="14" fill="#fff" opacity=".85"/><path d="M0 -9 L4 4 L0 1 L-4 4Z" fill="#082B52"/><text y="-17" text-anchor="middle" class="mlbl">N</text></g>
+    </svg>
+   </div><p class="mnote">Pin locations are indicative.</p></div>
+   <ul class="sites">
+    <li data-site="1" tabindex="0" role="button"><span class="n">1</span><span><b>[SITE NAME 1]</b><small>[X] corals, since [YEAR]</small></span></li>
+    <li data-site="2" tabindex="0" role="button"><span class="n">2</span><span><b>[SITE NAME 2]</b><small>[X] corals, since [YEAR]</small></span></li>
+    <li class="lab" data-site="3" tabindex="0" role="button"><span class="n">3</span><span><b>Kecinan coral lab</b><small>IBF nursery and base station</small></span></li>
+    <li data-site="4" tabindex="0" role="button"><span class="n">4</span><span><b>[SITE NAME 4]</b><small>[X] corals, since [YEAR]</small></span></li>
+    <li data-site="5" tabindex="0" role="button"><span class="n">5</span><span><b>[SITE NAME 5]</b><small>[X] corals, since [YEAR]</small></span></li>
+    <li data-site="6" tabindex="0" role="button"><span class="n">6</span><span><b>[SITE NAME 6]</b><small>[X] corals, since [YEAR]</small></span></li>
+    <li data-site="7" tabindex="0" role="button"><span class="n">7</span><span><b>[SITE NAME 7]</b><small>[X] corals, since [YEAR]</small></span></li>
+   </ul>
+  </div>
+ </div>
+</section>
+
+</main>
+
+<main class="view" data-page="partners" hidden>
+<!-- PARTNERS -->
+<section class="partners" id="partners">
+ <div class="wrap">
+  <div class="eyebrow">Partners</div>
+  <h2>Made possible together</h2>
+  <div class="logos">
+   <div class="logo">Indonesian Blue Foundation</div><div class="logo">TU Delft</div><div class="logo">[PARTNER]</div><div class="logo">[PARTNER]</div><div class="logo">[PARTNER]</div><div class="logo">[PARTNER]</div>
+  </div>
+  <div class="pband">
+   <div><h3>Become a partner</h3><p>Sponsor the event, adopt a whole reef section or host a booth at the expo.</p></div>
+   <button type="button" class="btn btn-y" data-modal="partner">Get in touch</button>
+  </div>
+ </div>
+</section>
+
+<!-- IBF x TU DELFT -->
+<section id="ibf-tud">
+ <div class="wrap">
+  <div class="eyebrow">IBF x TU Delft</div>
+  <h2>Student projects, year by year</h2>
+  <p class="lead">Every year a team from the TU Delft minor Integrated Engineering and Design works with IBF on a real challenge in Lombok.</p>
+  <div class="years">
+   <div class="yc"><div class="y">2022</div><h3>[PROJECT NAME]</h3><p>[Short description of the project and result.]</p><div class="bar"><i style="width:100%"></i></div><span class="status">Completed</span></div>
+   <div class="yc"><div class="y">2023</div><h3>[PROJECT NAME]</h3><p>[Short description of the project and result.]</p><div class="bar"><i style="width:100%"></i></div><span class="status">Completed</span></div>
+   <div class="yc"><div class="y">2024</div><h3>[PROJECT NAME]</h3><p>[Short description of the project and result.]</p><div class="bar"><i style="width:100%"></i></div><span class="status">Completed</span></div>
+   <div class="yc"><div class="y">2025</div><h3>[PROJECT NAME]</h3><p>[Short description of the project and result.]</p><div class="bar"><i style="width:100%"></i></div><span class="status">Completed</span></div>
+   <div class="yc now"><div class="y">2026</div><h3>Team 9: Pare Mas</h3><p>Working with a local SME on production and equipment, plus this Coral Connect page.</p><div class="bar"><i style="width:35%"></i></div><span class="status">In progress</span></div>
+  </div>
+ </div>
+</section>
+
+</main>
+
+<main class="view" data-page="faq" hidden>
+<!-- FAQ -->
+<section class="faq" style="background:#F4F8FC">
+ <div class="wrap">
+  <div class="grid">
+   <div><div class="eyebrow">FAQ</div><h2>Questions</h2><p class="lead">Can't find your answer? Send us a message on WhatsApp or email.</p></div>
+   <div>
+    <details class="q" open><summary>Can I donate from outside Indonesia?</summary><p>Yes. You can pay by [PAYMENT METHODS] and see prices in EUR or USD.</p></details>
+    <details class="q"><summary>How do I know my coral is really planted?</summary><p>From Coral Friend onwards you hear which site your coral grows at. Coral Keeper and higher also get a photo.</p></details>
+    <details class="q"><summary>Is the event free to attend?</summary><p>[TICKET INFO]</p></details>
+    <details class="q"><summary>Can I cancel a monthly donation?</summary><p>Yes, at any time from your member account.</p></details>
+    <details class="q"><summary>Where does my money go?</summary><p>Directly to Indonesian Blue Foundation for coral frames, nursery work and monitoring.</p></details>
+   </div>
+  </div>
+ </div>
+</section>
+
+</main>
+
+<div class="drawer" id="drawer" hidden>
+ <div class="dpanel" role="dialog" aria-label="Your cart">
+  <div class="dhead"><h3>Your cart</h3><button type="button" class="dclose" id="dclose" aria-label="Close cart">&times;</button></div>
+  <ul id="dlist"></ul>
+  <p class="dempty" id="dempty">Your cart is empty. Find something in the merch shop.</p>
+  <div class="dfoot"><p>Payment and delivery: [PAYMENT METHODS]. Pick up at Coral Connect, 11–13 December.</p><button type="button" class="btn btn-y" id="checkout">Checkout</button></div>
+ </div>
+</div>
+<div class="modal" id="modal" hidden><div class="mbox" role="dialog" aria-modal="true" aria-labelledby="mtitle"><button type="button" class="dclose mx" id="mclose" aria-label="Close">&times;</button><div id="mbody"></div></div></div>
+<!-- FOOTER -->
+<footer class="foot">
+ <div class="wrap">
+  <div class="grid">
+   <div><div class="mini" style="margin-bottom:12px">CORAL <b>4.0</b> CONNECT</div><p>An event by Indonesian Blue Foundation, West Lombok, Indonesia.</p></div>
+   <div><h4>Event</h4><a href="#about">About</a><a href="#about">Program</a><a href="#home">Join</a></div>
+   <div><h4>Support</h4><a href="#donate">Adopt a coral</a><a href="#shop">Merch</a><a href="#partners">Partners</a></div>
+   <div><h4>Stay updated</h4><p>Get news about your coral and the next edition.</p><form id="subform"><label for="subemail" class="sr">Email</label><input id="subemail" type="email" required placeholder="Your email"><button class="btn btn-y" type="submit">Subscribe</button><p class="okmsg" id="subok" hidden>Thanks! You are on the list.</p></form></div>
+  </div>
+  <div class="bottom"><span>Indonesian Blue Foundation 2026</span><span>Instagram · WhatsApp · [EMAIL]</span></div>
+ </div>
+</footer>
+
+</div>
+<script>
+(function(){
+ var views=[].slice.call(document.querySelectorAll('.view'));
+ var names=views.map(function(v){return v.getAttribute('data-page')});
+ function show(){
+  var h=(location.hash||'#home').slice(1)||'home';
+  var page=names.indexOf(h)>-1?h:null, target=null;
+  if(!page){target=document.getElementById(h);var v=target&&target.closest('.view');page=v?v.getAttribute('data-page'):'home';}
+  views.forEach(function(v){v.hidden=v.getAttribute('data-page')!==page});
+  document.querySelectorAll('.tabs a').forEach(function(a){a.classList.toggle('on',a.getAttribute('href')==='#'+page)});
+  
+  var m=document.querySelector('.member');if(m)m.open=false;
+  if(target&&names.indexOf(h)<0){target.scrollIntoView();}else{window.scrollTo(0,0);}
+  var t={home:'Coral Connect 4.0',about:'About | Coral Connect 4.0',donate:'Adopt a coral | Coral Connect 4.0',shop:'Shop | Coral Connect 4.0',reef:'Our reef | Coral Connect 4.0',partners:'Partners | Coral Connect 4.0',faq:'FAQ | Coral Connect 4.0'};
+  document.title=t[page]||t.home;
+ }
+ window.addEventListener('hashchange',show);show();
+})();
+</script>
+<script>window.__ID={"Member": "Anggota", "Log in": "Masuk", "Register": "Daftar", "My adopted coral": "Karang adopsi saya", "Donate": "Donasi", "Home": "Beranda", "About": "Tentang", "Adopt a coral": "Adopsi karang", "Merch": "Merchandise", "Our reef": "Terumbu kami", "Partners": "Mitra", "FAQ": "Tanya jawab", "Connecting minds and reefs. Three days in Lombok where": "Menghubungkan pikiran dan terumbu. Tiga hari di Lombok di mana", "science, community and business": "sains, masyarakat dan bisnis", "meet to restore coral.": "bertemu untuk memulihkan karang.", "Join the event": "Ikuti acaranya", "Edition 4": "Edisi ke-4", "December 2026": "Desember 2026", "days": "hari", "hours": "jam", "min": "menit", "West Lombok, Indonesia": "Lombok Barat, Indonesia", "Look back": "Kilas balik", "Three editions so far": "Tiga edisi sejauh ini", "What started as a small gathering has grown into a yearly reef community.": "Yang dimulai sebagai pertemuan kecil kini menjadi komunitas terumbu tahunan.", "editions since 2023": "edisi sejak 2023", "participants per edition": "peserta per edisi", "corals planted": "karang ditanam", "partners involved": "mitra terlibat", "Aftermovie 2023": "Aftermovie 2023", "Highlights 2025": "Sorotan 2025", "Mangrove tour": "Tur mangrove", "Get involved": "Ikut terlibat", "Three ways to help the reef": "Tiga cara membantu terumbu", "Adopt": "Adopsi", "Give a coral a home and follow how it grows, from a simple donation to a photo every 3 months.": "Beri rumah untuk karang dan ikuti pertumbuhannya, dari donasi sederhana hingga foto setiap 3 bulan.", "Choose your level →": "Pilih level Anda →", "Shop": "Toko", "Wear the reef": "Kenakan terumbu", "Shirts, caps, stickers and more. All profit goes to coral restoration.": "Kaos, topi, stiker dan lainnya. Semua keuntungan untuk pemulihan karang.", "Visit the shop →": "Kunjungi toko →", "Learn": "Belajar", "Why reefs matter and the seven places along Lombok where IBF restores coral.": "Mengapa terumbu penting dan tujuh lokasi di Lombok tempat IBF memulihkan karang.", "Explore the sites →": "Jelajahi lokasi →", "About Coral Connect": "Tentang Coral Connect", "A meeting place for everyone who cares about the reef": "Tempat bertemu bagi semua yang peduli pada terumbu", "Coral Connect is an annual event organised by Indonesian Blue Foundation that brings together marine scientists, local communities, students, entrepreneurs and government. We share knowledge, build partnerships and turn ideas into real coral restoration along the coast of Lombok.": "Coral Connect adalah acara tahunan yang diselenggarakan oleh Indonesian Blue Foundation yang mempertemukan ilmuwan kelautan, masyarakat lokal, mahasiswa, wirausahawan dan pemerintah. Kami berbagi pengetahuan, membangun kemitraan dan mewujudkan ide menjadi pemulihan karang nyata di sepanjang pesisir Lombok.", "This fourth edition focuses on connecting local knowledge with new technology, and on making reef restoration a shared responsibility. [FINAL TEXT FROM HENRY]": "Edisi keempat ini berfokus pada menghubungkan pengetahuan lokal dengan teknologi baru, dan menjadikan pemulihan terumbu tanggung jawab bersama. [FINAL TEXT FROM HENRY]", "See the program": "Lihat program", "Talks and panels": "Ceramah dan diskusi panel", "Scientists, fishers and founders on what works for reef restoration in Indonesia.": "Ilmuwan, nelayan dan pendiri usaha tentang apa yang berhasil untuk pemulihan terumbu di Indonesia.", "Day 1": "Hari 1", "Hands-on workshops": "Lokakarya praktik", "Build coral frames, learn reef monitoring and try out restoration techniques.": "Membuat rangka karang, belajar pemantauan terumbu dan mencoba teknik pemulihan.", "Day 1–2": "Hari 1–2", "Expo and booths": "Pameran dan stan", "Local businesses, NGOs and student projects show their solutions.": "Usaha lokal, LSM dan proyek mahasiswa menampilkan solusi mereka.", "Day 2": "Hari 2", "Mangrove eco-tour": "Ekowisata mangrove", "A guided tour through the mangroves with planting together.": "Tur berpemandu melalui hutan mangrove sambil menanam bersama.", "Ocean pub quiz": "Kuis laut", "A relaxed evening with questions about the sea, the reef and Lombok.": "Malam santai dengan pertanyaan tentang laut, terumbu dan Lombok.", "Day 2 evening": "Hari 2 malam", "Networking and closing": "Jejaring dan penutupan", "Meet partners, share outcomes and set goals for the year ahead.": "Bertemu mitra, berbagi hasil dan menetapkan tujuan untuk tahun depan.", "Day 3": "Hari 3", "Give a coral a home on the reef": "Beri karang rumah di terumbu", "Every donation goes directly to coral restoration by Indonesian Blue Foundation. Choose how close you want to follow your coral.": "Setiap donasi langsung digunakan untuk pemulihan karang oleh Indonesian Blue Foundation. Pilih seberapa dekat Anda ingin mengikuti karang Anda.", "One time": "Sekali", "Monthly": "Bulanan", "Yearly": "Tahunan", "Level 1": "Level 1", "Support the restoration": "Dukung pemulihan", "Thank-you email": "Email ucapan terima kasih", "Adopt one coral": "Adopsi satu karang", "We tell you which site it grows at": "Kami beri tahu di lokasi mana karang tumbuh", "Everything in Coral Friend": "Semua dari Coral Friend", "Name card on your coral": "Kartu nama di karang Anda", "Photo at planting": "Foto saat penanaman", "Everything in Coral Keeper": "Semua dari Coral Keeper", "Choose the site yourself": "Pilih lokasi sendiri", "Everything in Reef Guardian": "Semua dari Reef Guardian", "New photo every 3 months": "Foto baru setiap 3 bulan", "Name on the donor wall": "Nama di dinding donatur", "Payment by [PAYMENT METHODS]. International donors are welcome. Prices shown in IDR, with a currency switch to EUR and USD.": "Pembayaran melalui [PAYMENT METHODS]. Donatur internasional dipersilakan. Harga dalam IDR, dengan pilihan mata uang EUR dan USD.", "Merch shop": "Toko merchandise", "All profit goes to coral restoration. Shirts can be picked up at Coral Connect or delivered within Indonesia.": "Semua keuntungan untuk pemulihan karang. Kaos dapat diambil di Coral Connect atau dikirim ke seluruh Indonesia.", "All": "Semua", "Clothing": "Pakaian", "Caps": "Topi", "Accessories": "Aksesori", "Collab": "Kolaborasi", "Pick up at CC": "Ambil di CC", "or delivery in Indonesia. Small items ship worldwide.": "atau dikirim di Indonesia. Barang kecil dikirim ke seluruh dunia.", "Indonesia only": "Hanya Indonesia", "Coral Connect 4.0 shirt": "Kaos Coral Connect 4.0", "Organic cotton, logo print, sizes S to XL.": "Katun organik, cetak logo, ukuran S sampai XL.", "Add to cart": "Tambah ke keranjang", "Ships worldwide": "Dikirim ke seluruh dunia", "Sticker pack": "Paket stiker", "Five waterproof reef stickers. Included free with yearly subscriptions abroad.": "Lima stiker terumbu tahan air. Gratis untuk langganan tahunan dari luar negeri.", "Best value": "Paling hemat", "Combo: shirt and stickers": "Paket: kaos dan stiker", "The shirt plus the full sticker pack.": "Kaos ditambah paket stiker lengkap.", "about 300,000 IDR": "sekitar 300.000 IDR", "IBF wave cap": "Topi ombak IBF", "The three waves of the IBF logo embroidered on the front, adjustable strap.": "Tiga ombak logo IBF dibordir di depan, tali bisa diatur.", "Light blue with yellow waves": "Biru muda dengan ombak kuning", "Light blue with white waves": "Biru muda dengan ombak putih", "White with light blue waves": "Putih dengan ombak biru muda", "Yellow with blue waves": "Kuning dengan ombak biru", "Limited edition": "Edisi terbatas", "Only at CC 4.0": "Hanya di CC 4.0", "Coral Connect 4.0 cap": "Topi Coral Connect 4.0", "Limited run for this edition, with the brain coral from the Coral Connect logo embroidered on the front.": "Produksi terbatas untuk edisi ini, dengan karang otak dari logo Coral Connect dibordir di depan.", "Light blue with yellow coral brain": "Biru muda dengan karang otak kuning", "Light blue with white coral brain": "Biru muda dengan karang otak putih", "White with light blue coral brain": "Putih dengan karang otak biru muda", "Yellow with blue coral brain": "Kuning dengan karang otak biru", "Collab, concept": "Kolaborasi, konsep", "A special edition of bags made for Coral Connect 4.0 in the event colours, light blue, yellow and white. Light, strong and made in Indonesia. Part of every sale goes to coral restoration.": "Tas edisi khusus untuk Coral Connect 4.0 dalam warna acara, biru muda, kuning dan putih. Ringan, kuat dan buatan Indonesia. Sebagian dari setiap penjualan untuk pemulihan karang.", "Notify me": "Beri tahu saya", "More from the reef shop": "Lainnya dari toko terumbu", "Recycled totebag": "Tas jinjing daur ulang", "Tote bag made from recycled plastic, with the Coral Connect logo.": "Tas jinjing dari plastik daur ulang, dengan logo Coral Connect.", "Reef socks": "Kaos kaki terumbu", "Socks in IBF blue and yellow with a coral and wave pattern.": "Kaos kaki biru dan kuning IBF dengan motif karang dan ombak.", "Reef bracelet": "Gelang terumbu", "Woven bracelet in IBF blue and yellow, made locally.": "Gelang anyaman biru dan kuning IBF, buatan lokal.", "Water bottle": "Botol minum", "Reusable steel bottle with the wave logo. One less plastic bottle in the sea.": "Botol baja yang bisa dipakai ulang dengan logo ombak. Satu botol plastik lebih sedikit di laut.", "Coral postcards": "Kartu pos karang", "Set of postcards with photos of our own corals at the restoration sites.": "Set kartu pos dengan foto karang kami di lokasi pemulihan.", "Bottle opener": "Pembuka botol", "Keychain bottle opener with the Coral Connect 4.0 logo.": "Gantungan kunci pembuka botol dengan logo Coral Connect 4.0.", "Playing cards": "Kartu remi", "A deck with a reef animal and a reef fact on every card.": "Satu set kartu dengan hewan terumbu dan fakta terumbu di setiap kartu.", "Snorkel mask": "Masker snorkel", "Good quality mask to explore the reef yourself, with IBF strap.": "Masker berkualitas untuk menjelajahi terumbu sendiri, dengan tali IBF.", "Why reefs matter": "Mengapa terumbu penting", "Small animals, huge impact": "Hewan kecil, dampak besar", "of all marine life depends on coral reefs, on less than 1% of the ocean floor.": "dari seluruh kehidupan laut bergantung pada terumbu karang, yang menutupi kurang dari 1% dasar laut.", "of wave energy can be absorbed by a healthy reef, protecting the coast.": "energi gelombang dapat diserap oleh terumbu yang sehat, melindungi pantai.", "Coral Triangle": "Segitiga Terumbu Karang", "Indonesia lies in the most biodiverse reef region on earth.": "Indonesia berada di kawasan terumbu dengan keanekaragaman hayati tertinggi di bumi.", "above normal for a few weeks can already cause coral bleaching.": "di atas normal selama beberapa minggu sudah bisa menyebabkan pemutihan karang.", "is how much many corals grow per year, which makes restoration patient work.": "adalah pertumbuhan banyak karang per tahun, sehingga pemulihan butuh kesabaran.", "Millions": "Jutaan", "of people in Indonesia rely on reefs for food and income.": "orang di Indonesia bergantung pada terumbu untuk makanan dan penghasilan.", "Where we work": "Tempat kami bekerja", "Seven restoration sites along Lombok": "Tujuh lokasi pemulihan di Lombok","Map of North West Lombok with the Gili islands":"Peta Lombok Barat Laut dengan pulau-pulau Gili", "Restoration sites around North West Lombok, from Senggigi to the Gili islands and Tanjung.":"Lokasi pemulihan di Lombok Barat Laut, dari Senggigi hingga Gili dan Tanjung.","Pin locations are indicative.":"Lokasi pin bersifat perkiraan.","Click a site to see what grows there, how many corals are planted and when it was started.": "Klik lokasi untuk melihat apa yang tumbuh di sana, berapa karang yang ditanam dan kapan dimulai.", "Kecinan coral lab": "Lab karang Kecinan", "IBF nursery and base station": "Pembibitan dan basis IBF", "Made possible together": "Terwujud bersama", "Become a partner": "Menjadi mitra", "Sponsor the event, adopt a whole reef section or host a booth at the expo.": "Sponsori acara, adopsi satu bagian terumbu atau buka stan di pameran.", "Get in touch": "Hubungi kami", "Student projects, year by year": "Proyek mahasiswa, dari tahun ke tahun", "Every year a team from the TU Delft minor Integrated Engineering and Design works with IBF on a real challenge in Lombok.": "Setiap tahun tim dari minor Integrated Engineering and Design TU Delft bekerja sama dengan IBF pada tantangan nyata di Lombok.", "Completed": "Selesai", "Donor wall": "Dinding donatur", "A physical wall with the names of coral adopters.": "Dinding fisik dengan nama-nama pengadopsi karang.", "Team 9: Pare Mas": "Tim 9: Pare Mas", "Working with a local SME on production and equipment, plus this Coral Connect page.": "Bekerja sama dengan UMKM lokal di bidang produksi dan peralatan, serta halaman Coral Connect ini.", "In progress": "Sedang berjalan", "Questions": "Pertanyaan", "Can't find your answer? Send us a message on WhatsApp or email.": "Tidak menemukan jawaban? Kirim pesan lewat WhatsApp atau email.", "Can I donate from outside Indonesia?": "Bisakah saya berdonasi dari luar Indonesia?", "Yes. You can pay by [PAYMENT METHODS] and see prices in EUR or USD.": "Ya. Anda bisa membayar melalui [PAYMENT METHODS] dan melihat harga dalam EUR atau USD.", "How do I know my coral is really planted?": "Bagaimana saya tahu karang saya benar-benar ditanam?", "From Coral Friend onwards you hear which site your coral grows at. Coral Keeper and higher also get a photo.": "Mulai dari Coral Friend Anda akan tahu di lokasi mana karang Anda tumbuh. Coral Keeper ke atas juga mendapat foto.", "Is the event free to attend?": "Apakah acara ini gratis?", "Can I cancel a monthly donation?": "Bisakah saya membatalkan donasi bulanan?", "Yes, at any time from your member account.": "Ya, kapan saja dari akun anggota Anda.", "Where does my money go?": "Ke mana uang saya digunakan?", "Directly to Indonesian Blue Foundation for coral frames, nursery work and monitoring.": "Langsung ke Indonesian Blue Foundation untuk rangka karang, pembibitan dan pemantauan.", "Your cart": "Keranjang Anda", "Your cart is empty. Find something in the merch shop.": "Keranjang Anda kosong. Cari sesuatu di toko merchandise.", "Payment and delivery: [PAYMENT METHODS]. Pick up at Coral Connect, 11–13 December.": "Pembayaran dan pengiriman: [PAYMENT METHODS]. Ambil di Coral Connect, 11–13 Desember.", "Checkout": "Bayar", "An event by Indonesian Blue Foundation, West Lombok, Indonesia.": "Acara oleh Indonesian Blue Foundation, Lombok Barat, Indonesia.", "Event": "Acara", "Program": "Program", "Join": "Ikut", "Support": "Dukung", "Stay updated": "Tetap terhubung", "Get news about your coral and the next edition.": "Dapatkan kabar tentang karang Anda dan edisi berikutnya.", "Subscribe": "Berlangganan", "Thanks! You are on the list.": "Terima kasih! Anda sudah terdaftar.", "Language": "Bahasa", "Open cart": "Buka keranjang", "Pages": "Halaman", "Frequency": "Frekuensi", "Filter products": "Filter produk", "Close cart": "Tutup keranjang", "Close": "Tutup", "Your email": "Email Anda", "Light blue, yellow waves": "Biru muda, ombak kuning", "Light blue, white waves": "Biru muda, ombak putih", "White, light blue waves": "Putih, ombak biru muda", "Yellow, blue waves": "Kuning, ombak biru", "Follow your adopted coral and manage your donations.": "Ikuti karang adopsi Anda dan kelola donasi Anda.", "Password": "Kata sandi", "No account yet? Register": "Belum punya akun? Daftar", "Become a member": "Menjadi anggota", "Create an account to follow your coral and get updates.": "Buat akun untuk mengikuti karang Anda dan mendapat kabar terbaru.", "Full name": "Nama lengkap", "Country": "Negara", "Netherlands": "Belanda", "Other": "Lainnya", "Create account": "Buat akun", "Already a member? Log in": "Sudah menjadi anggota? Masuk", "Join Coral Connect 4.0": "Ikuti Coral Connect 4.0", "11–13 December 2026, Marina by the Bay, West Lombok.": "11–13 Desember 2026, Marina by the Bay, Lombok Barat.", "WhatsApp number": "Nomor WhatsApp", "I am a": "Saya adalah", "Student": "Mahasiswa", "Scientist": "Ilmuwan", "Business": "Pelaku usaha", "Community member": "Anggota masyarakat", "Government": "Pemerintah", "Which days?": "Hari apa saja?", "Every donation goes to coral restoration by IBF.": "Setiap donasi digunakan untuk pemulihan karang oleh IBF.", "Level": "Level", "How often": "Seberapa sering", "Amount (IDR)": "Jumlah (IDR)", "Your name": "Nama Anda", "Name on your coral card": "Nama di kartu karang Anda", "Choose your site": "Pilih lokasi Anda", "Pay with": "Bayar dengan", "Bank transfer": "Transfer bank", "Credit card": "Kartu kredit", "Continue to payment": "Lanjut ke pembayaran", "Optional": "Opsional", "Get a message as soon as the special edition bags are available.": "Dapatkan pesan segera setelah tas edisi khusus tersedia.", "Tell us how you would like to support the reef.": "Ceritakan bagaimana Anda ingin mendukung terumbu.", "Company or organisation": "Perusahaan atau organisasi", "I am interested in": "Saya tertarik pada", "Sponsoring the event": "Mensponsori acara", "Adopting a reef section": "Mengadopsi bagian terumbu", "A booth at the expo": "Stan di pameran", "Something else": "Hal lain", "Message": "Pesan", "Send": "Kirim", "Aftermovie coming soon": "Aftermovie segera hadir", "Welcome back!": "Selamat datang kembali!", "You are logged in. You can now see your adopted coral.": "Anda sudah masuk. Sekarang Anda bisa melihat karang adopsi Anda.", "Welcome to Coral Connect!": "Selamat datang di Coral Connect!", "Your account is ready. We sent a confirmation to your email.": "Akun Anda sudah siap. Kami telah mengirim konfirmasi ke email Anda.", "You are registered!": "Anda sudah terdaftar!", "See you at Marina by the Bay on 11 December. We will send the program to your email and WhatsApp.": "Sampai jumpa di Marina by the Bay pada 11 Desember. Kami akan mengirim program ke email dan WhatsApp Anda.", "Thank you for adopting a coral!": "Terima kasih telah mengadopsi karang!", "We sent the payment instructions to your email. After payment you will hear which site your coral grows at.": "Kami telah mengirim instruksi pembayaran ke email Anda. Setelah pembayaran Anda akan tahu di lokasi mana karang Anda tumbuh.", "You are on the list": "Anda sudah terdaftar", "We will email you when the bags are available.": "Kami akan mengirim email saat tas tersedia.", "Message sent": "Pesan terkirim", "Thank you! The IBF team will contact you within a few days.": "Terima kasih! Tim IBF akan menghubungi Anda dalam beberapa hari.", "Order placed!": "Pesanan berhasil!", "Thank you! We will send payment and pick-up details to your email and WhatsApp.": "Terima kasih! Kami akan mengirim detail pembayaran dan pengambilan ke email dan WhatsApp Anda.", "Thank you": "Terima kasih", "see you next year": "sampai jumpa tahun depan", "Live now": "Sedang berlangsung", "at Marina by the Bay": "di Marina by the Bay", "per month": "per bulan", "per year": "per tahun", "Remove": "Hapus", "Added": "Ditambahkan", "Log in first to see your coral.": "Masuk dulu untuk melihat karang Anda.", "You have not adopted a coral yet.": "Anda belum mengadopsi karang.", "Your cart is empty": "Keranjang Anda kosong", "Find something in the merch shop.": "Cari sesuatu di toko merchandise.", "Go to merch": "Ke toko merchandise", "Delivery": "Pengiriman", "Pick up at Coral Connect": "Ambil di Coral Connect", "Delivery in Indonesia": "Pengiriman di Indonesia", "Worldwide (small items only)": "Seluruh dunia (hanya barang kecil)", "Address (only for delivery)": "Alamat (hanya untuk pengiriman)", "Place order": "Pesan sekarang", "Indonesian Blue Foundation 2026": "Indonesian Blue Foundation 2026"};</script>
+<script>
+(function(){
+var ID=window.__ID||{};
+var lang='en',freq='once',cnt=null;
+function t(x){return lang==='id'&&ID[x]?ID[x]:x;}
+var SKIP={SCRIPT:1,STYLE:1,SVG:1,svg:1};
+function trTree(root){
+ var w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT,{acceptNode:function(n){var p=n.parentNode;while(p&&p!==root.parentNode){if(SKIP[p.nodeName]||(p.closest&&p.closest('svg')))return 2;p=p.parentNode;}return n.nodeValue.trim()?1:2;}});
+ var n;while(n=w.nextNode()){if(n.__en===undefined)n.__en=n.nodeValue;var raw=n.__en,k=raw.trim();var v=lang==='id'&&ID[k]?ID[k]:k;n.nodeValue=raw.replace(k,v);}
+ (root.querySelectorAll?root:document).querySelectorAll('[placeholder],[aria-label],[title]').forEach(function(el){['placeholder','aria-label','title'].forEach(function(a){if(!el.hasAttribute(a))return;var key='__en_'+a;if(el[key]===undefined)el[key]=el.getAttribute(a);el.setAttribute(a,t(el[key]));});});
+}
+function setLang(l){lang=l;document.documentElement.lang=l;document.querySelectorAll('.lang button').forEach(function(b){b.classList.toggle('on',b.getAttribute('data-lang')===l)});document.querySelectorAll('.price .per').forEach(function(p){p.textContent=''});trTree(document.body);document.querySelectorAll('.price .per').forEach(function(p){p.textContent=freq==='month'?t('per month'):freq==='year'?t('per year'):''});if(typeof draw==='function'&&cnt)draw();tick();try{localStorage.setItem('cc-lang',l)}catch(e){}}
+document.querySelectorAll('.lang button').forEach(function(b){b.addEventListener('click',function(){setLang(b.getAttribute('data-lang'))})});
+
+/* countdown to 11 Dec 2026 09:00 WITA */
+var start=new Date('2026-12-11T09:00:00+08:00').getTime(),end=new Date('2026-12-13T22:00:00+08:00').getTime();
+function tick(){var now=Date.now(),cd=document.getElementById('countdown');if(!cd)return;
+ if(now>=end){cd.innerHTML='<div><b>'+t('Thank you')+'</b><small>'+t('see you next year')+'</small></div>';return;}
+ if(now>=start){cd.innerHTML='<div><b>'+t('Live now')+'</b><small>'+t('at Marina by the Bay')+'</small></div>';return;}
+ var d=Math.floor((start-now)/1000);var dd=Math.floor(d/86400),hh=Math.floor(d%86400/3600),mm=Math.floor(d%3600/60);
+ var a=document.getElementById('cd-d'),b=document.getElementById('cd-h'),c=document.getElementById('cd-m');if(a){a.textContent=dd;b.textContent=hh;c.textContent=mm;}}
+tick();setInterval(tick,20000);
+
+/* donation frequency */
+document.querySelectorAll('.toggle button').forEach(function(b){b.addEventListener('click',function(){freq=b.getAttribute('data-freq');document.querySelectorAll('.toggle button').forEach(function(x){x.classList.toggle('on',x===b)});document.querySelectorAll('.price .per').forEach(function(p){p.textContent=freq==='month'?t('per month'):freq==='year'?t('per year'):''});})});
+
+/* map */
+function site(i){document.querySelectorAll('[data-site]').forEach(function(el){el.classList.toggle('act',el.getAttribute('data-site')===String(i))});}
+document.querySelectorAll('[data-site]').forEach(function(el){el.addEventListener('click',function(){site(el.getAttribute('data-site'))});el.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();site(el.getAttribute('data-site'))}})});
+
+/* subscribe */
+var sf=document.getElementById('subform');if(sf)sf.addEventListener('submit',function(e){e.preventDefault();document.getElementById('subok').hidden=false;sf.reset();});
+
+/* cart */
+var cart=[],loggedIn=false;
+cnt=document.getElementById('cartcount');var drawer=document.getElementById('drawer'),list=document.getElementById('dlist'),empty=document.getElementById('dempty');
+function draw(){cnt.textContent=cart.length;list.innerHTML='';cart.forEach(function(n,i){var li=document.createElement('li');var sp=document.createElement('span');sp.textContent=t(n);li.appendChild(sp);var r=document.createElement('button');r.type='button';r.textContent=t('Remove');r.onclick=function(){cart.splice(i,1);draw()};li.appendChild(r);list.appendChild(li)});empty.hidden=cart.length>0;}
+document.querySelectorAll('[data-add]').forEach(function(b){b.addEventListener('click',function(){cart.push(b.getAttribute('data-add'));draw();b.classList.add('done');b.textContent=t('Added');setTimeout(function(){b.classList.remove('done');b.textContent=t('Add to cart')},1400)})});
+document.getElementById('cartbtn').onclick=function(){drawer.hidden=false};
+document.getElementById('dclose').onclick=function(){drawer.hidden=true};
+drawer.addEventListener('click',function(e){if(e.target===drawer)drawer.hidden=true});
+document.getElementById('checkout').onclick=function(){drawer.hidden=true;openModal('checkout')};
+
+/* shop filter */
+var chips=document.querySelectorAll('.fchips button');
+chips.forEach(function(c){c.onclick=function(){var f=c.getAttribute('data-f');chips.forEach(function(x){x.setAttribute('aria-pressed',x===c)});document.querySelectorAll('[data-page="shop"] [data-cat]').forEach(function(el){el.classList.toggle('off',f!=='all'&&el.getAttribute('data-cat')!==f)});var more=document.querySelector('.more');if(more){more.style.display=more.querySelectorAll('[data-cat]:not(.off)').length?'':'none'}}});
+
+/* modals */
+var modal=document.getElementById('modal'),mbody=document.getElementById('mbody'),lastFocus=null;
+var TIERS=['Supporter','Coral Friend','Coral Keeper','Reef Guardian','Reef Champion'];
+function f(id,label,type,extra){return '<label class="fld" for="'+id+'">'+label+'<input id="'+id+'" name="'+id+'" type="'+(type||'text')+'" '+(extra||'required')+'></label>';}
+function sel(id,label,opts,val){return '<label class="fld" for="'+id+'">'+label+'<select id="'+id+'" name="'+id+'">'+opts.map(function(o){return '<option'+(o===val?' selected':'')+'>'+o+'</option>'}).join('')+'</select></label>';}
+function ta(id,label){return '<label class="fld" for="'+id+'">'+label+'<textarea id="'+id+'" name="'+id+'" rows="3"></textarea></label>';}
+function done(title,text){return '<div class="done"><div class="ok"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#082B52" stroke-width="3"><path d="M5 12l5 5 9-10"/></svg></div><h3 id="mtitle">'+title+'</h3><p>'+text+'</p><button type="button" class="btn btn-b" data-close>Close</button></div>';}
+var T={
+ login:function(){return '<h3 id="mtitle">Log in</h3><p class="msub">Follow your adopted coral and manage your donations.</p><form data-ok="login">'+f('lemail','Email','email')+f('lpass','Password','password')+'<button class="btn btn-b" type="submit">Log in</button><button type="button" class="mlink" data-go="register">No account yet? Register</button></form>';},
+ register:function(){return '<h3 id="mtitle">Become a member</h3><p class="msub">Create an account to follow your coral and get updates.</p><form data-ok="register">'+f('rname','Full name')+f('remail','Email','email')+sel('rcountry','Country',['Indonesia','Netherlands','Other'])+f('rpass','Password','password')+'<button class="btn btn-b" type="submit">Create account</button><button type="button" class="mlink" data-go="login">Already a member? Log in</button></form>';},
+ mycoral:function(){if(!loggedIn)return '<h3 id="mtitle">My adopted coral</h3><p class="msub">Log in first to see your coral.</p><button type="button" class="btn btn-b" data-go="login">Log in</button>';return '<h3 id="mtitle">My adopted coral</h3><p class="msub">You have not adopted a coral yet.</p><a class="btn btn-b" href="#donate" data-close>Adopt a coral</a>';},
+ ticket:function(){return '<h3 id="mtitle">Join Coral Connect 4.0</h3><p class="msub">11–13 December 2026, Marina by the Bay, West Lombok.</p><form data-ok="ticket">'+f('tname','Full name')+'<div class="row2">'+f('temail','Email','email')+f('twa','WhatsApp number','tel')+'</div>'+sel('trole','I am a',['Student','Scientist','Business','Community member','Government','Other'])+'<div class="fld">Which days?<div class="checks"><label><input type="checkbox" checked> Day 1</label><label><input type="checkbox" checked> Day 2</label><label><input type="checkbox" checked> Day 3</label></div></div><button class="btn btn-y" type="submit">Register</button></form>';},
+ video:function(o){return '<h3 id="mtitle">'+o.title+'</h3><div class="vbox">Aftermovie coming soon</div>';},
+ donate:function(o){var tier=o.tier||'Supporter',lvl=TIERS.indexOf(tier);var fr=freq==='month'?'Monthly':freq==='year'?'Yearly':'One time';
+  return '<h3 id="mtitle">Adopt a coral</h3><p class="msub">Every donation goes to coral restoration by IBF.</p><form data-ok="donate">'+sel('dtier','Level',TIERS,tier)+'<div class="row2">'+sel('dfreq','How often',['One time','Monthly','Yearly'],fr)+f('damount','Amount (IDR)','number','required min="10000" placeholder="[PRICE]"')+'</div><div class="row2">'+f('dname','Your name')+f('demail','Email','email')+'</div>'+(lvl>=2?f('dcard','Name on your coral card','text','placeholder="Optional"'):'')+(lvl>=3?sel('dsite','Choose your site',['Kecinan coral lab','[SITE NAME 1]','[SITE NAME 2]','[SITE NAME 4]','[SITE NAME 5]','[SITE NAME 6]','[SITE NAME 7]']):'')+sel('dpay','Pay with',['Bank transfer','QRIS','PayPal','Credit card'])+'<button class="btn btn-y" type="submit">Continue to payment</button></form>';},
+ notify:function(){return '<h3 id="mtitle">Coral Connect x Ticket To The Moon</h3><p class="msub">Get a message as soon as the special edition bags are available.</p><form data-ok="notify">'+f('nemail','Email','email')+'<button class="btn btn-y" type="submit">Notify me</button></form>';},
+ partner:function(){return '<h3 id="mtitle">Become a partner</h3><p class="msub">Tell us how you would like to support the reef.</p><form data-ok="partner">'+f('pcomp','Company or organisation')+'<div class="row2">'+f('pname','Your name')+f('pemail','Email','email')+'</div>'+sel('pint','I am interested in',['Sponsoring the event','Adopting a reef section','A booth at the expo','Something else'])+ta('pmsg','Message')+'<button class="btn btn-y" type="submit">Send</button></form>';},
+ checkout:function(){if(!cart.length)return '<h3 id="mtitle">Your cart is empty</h3><p class="msub">Find something in the merch shop.</p><a class="btn btn-b" href="#shop" data-close>Go to merch</a>';
+  return '<h3 id="mtitle">Checkout</h3><ul class="sum">'+cart.map(function(n){return '<li>'+n+'</li>'}).join('')+'</ul><form data-ok="checkout">'+f('cname','Full name')+'<div class="row2">'+f('cemail','Email','email')+f('cwa','WhatsApp number','tel')+'</div>'+sel('cdel','Delivery',['Pick up at Coral Connect','Delivery in Indonesia','Worldwide (small items only)'])+ta('caddr','Address (only for delivery)')+sel('cpay','Pay with',['Bank transfer','QRIS','PayPal','Credit card'])+'<button class="btn btn-y" type="submit">Place order</button></form>';}
+};
+var OK={
+ login:['Welcome back!','You are logged in. You can now see your adopted coral.'],
+ register:['Welcome to Coral Connect!','Your account is ready. We sent a confirmation to your email.'],
+ ticket:['You are registered!','See you at Marina by the Bay on 11 December. We will send the program to your email and WhatsApp.'],
+ donate:['Thank you for adopting a coral!','We sent the payment instructions to your email. After payment you will hear which site your coral grows at.'],
+ notify:['You are on the list','We will email you when the bags are available.'],
+ partner:['Message sent','Thank you! The IBF team will contact you within a few days.'],
+ checkout:['Order placed!','Thank you! We will send payment and pick-up details to your email and WhatsApp.']
+};
+function openModal(name,o){if(!modal.hidden&&!lastFocus){}else lastFocus=document.activeElement;mbody.innerHTML=T[name](o||{});modal.hidden=false;document.querySelectorAll('.member').forEach(function(m){m.open=false});trTree(mbody);var first=mbody.querySelector('input,select,textarea,button');if(first)first.focus();}
+function closeModal(){modal.hidden=true;if(lastFocus&&lastFocus.focus)lastFocus.focus();lastFocus=null;}
+document.addEventListener('click',function(e){var m=e.target.closest('[data-modal]');if(m){e.preventDefault();openModal(m.getAttribute('data-modal'),{tier:m.getAttribute('data-tier'),title:m.getAttribute('data-title')});return;}
+ var g=e.target.closest('[data-go]');if(g){openModal(g.getAttribute('data-go'));return;}
+ if(e.target.closest('[data-close]'))closeModal();});
+mbody.addEventListener('submit',function(e){e.preventDefault();var k=e.target.getAttribute('data-ok');if(k==='login'||k==='register')loggedIn=true;if(k==='checkout'){cart=[];draw();}mbody.innerHTML=done(OK[k][0],OK[k][1]);trTree(mbody);mbody.querySelector('button').focus();});
+document.getElementById('mclose').onclick=closeModal;
+modal.addEventListener('click',function(e){if(e.target===modal)closeModal()});
+document.addEventListener('keydown',function(e){if(e.key==='Escape'){if(!modal.hidden)closeModal();drawer.hidden=true;}});
+
+draw();
+var saved='en';try{saved=localStorage.getItem('cc-lang')||'en'}catch(e){}
+if(saved==='id')setLang('id');
+window.__cc={setLang:setLang,openModal:openModal,T:T,OK:OK};
+})();
+</script>
+
+</body></html>
